@@ -1,300 +1,232 @@
-
-<!doctype html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RKG EDITZ - Creative Editing Studio</title>
-<link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RKG EDITZ - Video Editor</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#111;
+  color:white;
+  text-align:center;
+}
+
+.editor{
+  max-width:700px;
+  margin:30px auto;
+  padding:20px;
+}
+
+h1{
+  color:#00eaff;
+}
+
+.upload{
+  border:2px dashed #00eaff;
+  padding:25px;
+  border-radius:15px;
+  margin-bottom:20px;
+}
+
+input[type="file"]{
+  width:100%;
+  padding:12px;
+}
+
+video{
+  width:100%;
+  max-height:400px;
+  margin-top:20px;
+  border-radius:15px;
+  background:#000;
+}
+
+.controls{
+  margin-top:20px;
+  display:grid;
+  gap:12px;
+}
+
+button{
+  padding:12px;
+  border:0;
+  border-radius:10px;
+  background:#00eaff;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  transform:scale(1.03);
+}
+
+label{
+  text-align:left;
+}
+
+input[type="range"]{
+  width:100%;
+}
+</style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div class="brand">RKG EDITZ</div>
+<div class="editor">
 
-  <nav>
-    <a href="#services">SERVICES</a>
-    <a href="#quick-tools">QUICK TOOLS</a>
-    <a href="#projects">PROJECTS</a>
-  </nav>
-</header>
+<h1>🎬 RKG EDITZ VIDEO EDITOR</h1>
 
-<section class="hero-logo">
-  <h1>RKG EDITZ</h1>
-  <p>Creative Photo, Reels and Video Editing Studio</p>
-  <a href="#services" class="service-btn">VIEW SERVICES</a>
-</section>
+<div class="upload">
+  <p>📁 Select Your Video</p>
+  <input type="file" id="videoInput" accept="video/*">
+</div>
 
-<main>
+<video id="video" controls></video>
 
-<section id="services">
-  <h2>OUR SERVICES</h2>
+<div class="controls">
 
-  <div class="cards">
+<label>
+🌞 Brightness
+<input type="range" id="brightness" min="50" max="200" value="100">
+</label>
 
-    <button class="card" onclick="openVideoEditor()">
-      🎬 <b>Video Editing</b>
-      <small>Upload & Edit Your Video</small>
-    </button>
+<label>
+🎨 Contrast
+<input type="range" id="contrast" min="50" max="200" value="100">
+</label>
 
-    <button class="card" onclick="alert('Photo Editing coming soon!')">
-      🖼️ <b>Photo Editing</b>
-      <small>HD, 4K & 8K Photo Editing</small>
-    </button>
+<label>
+🌈 Saturation
+<input type="range" id="saturation" min="0" max="200" value="100">
+</label>
 
-    <button class="card" onclick="alert('3D Editing coming soon!')">
-      ✨ <b>3D Editing</b>
-      <small>3D & Cinematic Effects</small>
-    </button>
+<label>
+🎬 Video Speed
+<input type="range" id="speed" min="0.25" max="2" step="0.25" value="1">
+</label>
 
-    <button class="card" onclick="alert('Reels Editing coming soon!')">
-      📱 <b>Reels Editing</b>
-      <small>Instagram Reels & Shorts</small>
-    </button>
+<button onclick="filterNormal()">Normal</button>
+<button onclick="filterCinematic()">🎬 Cinematic</button>
+<button onclick="filterBlack()">🖤 Black & White</button>
+<button onclick="filterVivid()">🔥 Vivid</button>
+<button onclick="rotateVideo()">🔄 Rotate</button>
+<button onclick="resetEdit()">♻️ Reset</button>
 
-    <button class="card" onclick="alert('Poster Design coming soon!')">
-      🎨 <b>Poster Design</b>
-      <small>Posters & Banners</small>
-    </button>
+</div>
 
-    <button class="card" onclick="alert('Music Editing coming soon!')">
-      🎵 <b>Music Editing</b>
-      <small>Add Music & Effects</small>
-    </button>
-
-  </div>
-</section>
-
-<section id="video-editor" style="display:none;">
-  <h2>🎬 VIDEO EDITOR</h2>
-
-  <input type="file" id="videoInput" accept="video/*" onchange="loadVideo(event)">
-
-  <div id="editorBox" style="display:none;">
-
-    <video id="videoPreview"
-      controls
-      playsinline
-      style="width:100%;max-width:700px;border-radius:15px;margin-top:15px;">
-    </video>
-
-    <div class="editor-controls">
-
-      <p>
-        Start:
-        <input type="number" id="startTime" value="0" min="0" step="0.1">
-      </p>
-
-      <p>
-        End:
-        <input type="number" id="endTime" value="0" min="0" step="0.1">
-      </p>
-
-      <p>
-        Speed:
-        <select id="videoSpeed">
-          <option value="0.5">0.5x</option>
-          <option value="1" selected>1x</option>
-          <option value="1.5">1.5x</option>
-          <option value="2">2x</option>
-        </select>
-      </p>
-
-      <button onclick="applySpeed()">⚡ Apply Speed</button>
-
-      <button onclick="toggleMute()">🔇 Mute / Unmute</button>
-
-      <select id="videoFilter" onchange="applyFilter()">
-        <option value="none">Normal</option>
-        <option value="grayscale(100%)">Black & White</option>
-        <option value="sepia(100%)">Sepia</option>
-        <option value="brightness(1.3)">Bright</option>
-        <option value="contrast(1.5)">High Contrast</option>
-      </select>
-
-      <button onclick="saveEditedVideo()">💾 SAVE VIDEO</button>
-
-    </div>
-  </div>
-</section>
-
-<section id="quick-tools">
-  <h2>QUICK TOOLS</h2>
-  <div class="chips">
-    <span>✂️ Trim</span>
-    <span>✂️ Split</span>
-    <span>📝 Text</span>
-    <span>✨ Effects</span>
-    <span>🎵 Music</span>
-  </div>
-</section>
-
-<section id="projects">
-  <h2>MY PROJECTS</h2>
-  <div class="project">
-    <span>📁</span>
-    <div>
-      <b>New Project</b>
-      <small>Ready to edit</small>
-    </div>
-  </div>
-</section>
-
-</main>
-
-<footer>
-  © 2026 RKG EDITZ - Creative Editing Studio
-</footer>
+</div>
 
 <script>
 
-let videoURL = null;
+const video = document.getElementById("video");
+const videoInput = document.getElementById("videoInput");
 
-function openVideoEditor() {
-  document.getElementById("video-editor").style.display = "block";
+const brightness = document.getElementById("brightness");
+const contrast = document.getElementById("contrast");
+const saturation = document.getElementById("saturation");
 
-  document.getElementById("video-editor")
-    .scrollIntoView({ behavior: "smooth" });
+let rotation = 0;
 
-  document.getElementById("videoInput").click();
-}
+videoInput.addEventListener("change", function(){
 
-function loadVideo(event) {
+  const file = this.files[0];
 
-  const file = event.target.files[0];
-
-  if (!file) return;
-
-  if (videoURL) {
-    URL.revokeObjectURL(videoURL);
+  if(file){
+    video.src = URL.createObjectURL(file);
+    video.load();
   }
 
-  videoURL = URL.createObjectURL(file);
+});
 
-  const video = document.getElementById("videoPreview");
+function applyFilter(){
 
-  video.src = videoURL;
-  video.load();
+  video.style.filter =
+  `brightness(${brightness.value}%)
+   contrast(${contrast.value}%)
+   saturate(${saturation.value}%)`;
 
-  document.getElementById("editorBox").style.display = "block";
-
-  video.onloadedmetadata = function () {
-    document.getElementById("startTime").value = 0;
-    document.getElementById("endTime").value =
-      video.duration.toFixed(1);
-  };
 }
 
-function applySpeed() {
+brightness.addEventListener("input", applyFilter);
+contrast.addEventListener("input", applyFilter);
+saturation.addEventListener("input", applyFilter);
 
-  const video = document.getElementById("videoPreview");
-  const speed = document.getElementById("videoSpeed").value;
+document.getElementById("speed").addEventListener("input", function(){
+  video.playbackRate = this.value;
+});
 
-  video.playbackRate = Number(speed);
+function filterNormal(){
+
+  brightness.value = 100;
+  contrast.value = 100;
+  saturation.value = 100;
+
+  applyFilter();
+
 }
 
-function toggleMute() {
+function filterCinematic(){
 
-  const video = document.getElementById("videoPreview");
+  brightness.value = 90;
+  contrast.value = 140;
+  saturation.value = 120;
 
-  video.muted = !video.muted;
+  applyFilter();
+
 }
 
-function applyFilter() {
+function filterBlack(){
 
-  const video = document.getElementById("videoPreview");
+  brightness.value = 100;
+  contrast.value = 120;
+  saturation.value = 0;
 
-  const filter =
-    document.getElementById("videoFilter").value;
+  applyFilter();
 
-  video.style.filter = filter;
 }
 
-async function saveEditedVideo() {
+function filterVivid(){
 
-  const video = document.getElementById("videoPreview");
+  brightness.value = 110;
+  contrast.value = 130;
+  saturation.value = 180;
 
-  if (!video.src) {
-    alert("Please select a video first.");
-    return;
-  }
+  applyFilter();
 
-  const start =
-    Number(document.getElementById("startTime").value);
+}
 
-  const end =
-    Number(document.getElementById("endTime").value);
+function rotateVideo(){
 
-  if (start >= end || end > video.duration) {
-    alert("Please select a valid Start and End time.");
-    return;
-  }
+  rotation += 90;
 
-  try {
+  video.style.transform =
+  `rotate(${rotation}deg)`;
 
-    video.currentTime = start;
+}
 
-    const stream = video.captureStream();
+function resetEdit(){
 
-    const recorder = new MediaRecorder(stream);
+  brightness.value = 100;
+  contrast.value = 100;
+  saturation.value = 100;
 
-    const chunks = [];
+  document.getElementById("speed").value = 1;
 
-    recorder.ondataavailable = function(event) {
+  video.playbackRate = 1;
 
-      if (event.data.size > 0) {
-        chunks.push(event.data);
-      }
+  rotation = 0;
 
-    };
+  video.style.transform = "rotate(0deg)";
 
-    recorder.onstop = function() {
+  applyFilter();
 
-      const blob =
-        new Blob(chunks, { type: "video/webm" });
-
-      const url =
-        URL.createObjectURL(blob);
-
-      const a =
-        document.createElement("a");
-
-      a.href = url;
-
-      a.download =
-        "RKG_EDITZ_Edited_Video.webm";
-
-      a.click();
-
-      URL.revokeObjectURL(url);
-    };
-
-    recorder.start();
-
-    video.play();
-
-    const timer = setInterval(function() {
-
-      if (video.currentTime >= end) {
-
-        clearInterval(timer);
-
-        video.pause();
-
-        recorder.stop();
-      }
-
-    }, 100);
-
-  } catch(error) {
-
-    alert("Video editing/export is not supported in this browser.");
-
-  }
 }
 
 </script>
 
 </body>
-</html>
+</html>>
