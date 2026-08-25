@@ -1,18 +1,17 @@
+
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RKG EDITZ - Photo, Reels and Creative Editing Studio</title>
+<title>RKG EDITZ - Creative Editing Studio</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
 <header class="topbar">
-  <div class="brand">
-    <span>RKG EDITZ</span>
-  </div>
+  <div class="brand">RKG EDITZ</div>
 
   <nav>
     <a href="#services">SERVICES</a>
@@ -34,36 +33,89 @@
 
   <div class="cards">
 
-    <button class="card" onclick="showMsg('Video Editing')">
+    <button class="card" onclick="openVideoEditor()">
       🎬 <b>Video Editing</b>
-      <small>Trim, Cut & Creative Editing</small>
+      <small>Upload & Edit Your Video</small>
     </button>
 
-    <button class="card" onclick="showMsg('Photo Editing')">
+    <button class="card" onclick="alert('Photo Editing coming soon!')">
       🖼️ <b>Photo Editing</b>
       <small>HD, 4K & 8K Photo Editing</small>
     </button>
 
-    <button class="card" onclick="showMsg('3D Editing')">
+    <button class="card" onclick="alert('3D Editing coming soon!')">
       ✨ <b>3D Editing</b>
-      <small>3D, HD & Cinematic Effects</small>
+      <small>3D & Cinematic Effects</small>
     </button>
 
-    <button class="card" onclick="showMsg('Reels Editing')">
+    <button class="card" onclick="alert('Reels Editing coming soon!')">
       📱 <b>Reels Editing</b>
       <small>Instagram Reels & Shorts</small>
     </button>
 
-    <button class="card" onclick="showMsg('Poster Design')">
+    <button class="card" onclick="alert('Poster Design coming soon!')">
       🎨 <b>Poster Design</b>
-      <small>Posters, Banners & Designs</small>
+      <small>Posters & Banners</small>
     </button>
 
-    <button class="card" onclick="showMsg('Music Editing')">
+    <button class="card" onclick="alert('Music Editing coming soon!')">
       🎵 <b>Music Editing</b>
-      <small>Add Music & Creative Effects</small>
+      <small>Add Music & Effects</small>
     </button>
 
+  </div>
+</section>
+
+<section id="video-editor" style="display:none;">
+  <h2>🎬 VIDEO EDITOR</h2>
+
+  <input type="file" id="videoInput" accept="video/*" onchange="loadVideo(event)">
+
+  <div id="editorBox" style="display:none;">
+
+    <video id="videoPreview"
+      controls
+      playsinline
+      style="width:100%;max-width:700px;border-radius:15px;margin-top:15px;">
+    </video>
+
+    <div class="editor-controls">
+
+      <p>
+        Start:
+        <input type="number" id="startTime" value="0" min="0" step="0.1">
+      </p>
+
+      <p>
+        End:
+        <input type="number" id="endTime" value="0" min="0" step="0.1">
+      </p>
+
+      <p>
+        Speed:
+        <select id="videoSpeed">
+          <option value="0.5">0.5x</option>
+          <option value="1" selected>1x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2x</option>
+        </select>
+      </p>
+
+      <button onclick="applySpeed()">⚡ Apply Speed</button>
+
+      <button onclick="toggleMute()">🔇 Mute / Unmute</button>
+
+      <select id="videoFilter" onchange="applyFilter()">
+        <option value="none">Normal</option>
+        <option value="grayscale(100%)">Black & White</option>
+        <option value="sepia(100%)">Sepia</option>
+        <option value="brightness(1.3)">Bright</option>
+        <option value="contrast(1.5)">High Contrast</option>
+      </select>
+
+      <button onclick="saveEditedVideo()">💾 SAVE VIDEO</button>
+
+    </div>
   </div>
 </section>
 
@@ -96,9 +148,152 @@
 </footer>
 
 <script>
-function showMsg(service) {
-  alert("RKG EDITZ - " + service + " selected!");
+
+let videoURL = null;
+
+function openVideoEditor() {
+  document.getElementById("video-editor").style.display = "block";
+
+  document.getElementById("video-editor")
+    .scrollIntoView({ behavior: "smooth" });
+
+  document.getElementById("videoInput").click();
 }
+
+function loadVideo(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  if (videoURL) {
+    URL.revokeObjectURL(videoURL);
+  }
+
+  videoURL = URL.createObjectURL(file);
+
+  const video = document.getElementById("videoPreview");
+
+  video.src = videoURL;
+  video.load();
+
+  document.getElementById("editorBox").style.display = "block";
+
+  video.onloadedmetadata = function () {
+    document.getElementById("startTime").value = 0;
+    document.getElementById("endTime").value =
+      video.duration.toFixed(1);
+  };
+}
+
+function applySpeed() {
+
+  const video = document.getElementById("videoPreview");
+  const speed = document.getElementById("videoSpeed").value;
+
+  video.playbackRate = Number(speed);
+}
+
+function toggleMute() {
+
+  const video = document.getElementById("videoPreview");
+
+  video.muted = !video.muted;
+}
+
+function applyFilter() {
+
+  const video = document.getElementById("videoPreview");
+
+  const filter =
+    document.getElementById("videoFilter").value;
+
+  video.style.filter = filter;
+}
+
+async function saveEditedVideo() {
+
+  const video = document.getElementById("videoPreview");
+
+  if (!video.src) {
+    alert("Please select a video first.");
+    return;
+  }
+
+  const start =
+    Number(document.getElementById("startTime").value);
+
+  const end =
+    Number(document.getElementById("endTime").value);
+
+  if (start >= end || end > video.duration) {
+    alert("Please select a valid Start and End time.");
+    return;
+  }
+
+  try {
+
+    video.currentTime = start;
+
+    const stream = video.captureStream();
+
+    const recorder = new MediaRecorder(stream);
+
+    const chunks = [];
+
+    recorder.ondataavailable = function(event) {
+
+      if (event.data.size > 0) {
+        chunks.push(event.data);
+      }
+
+    };
+
+    recorder.onstop = function() {
+
+      const blob =
+        new Blob(chunks, { type: "video/webm" });
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const a =
+        document.createElement("a");
+
+      a.href = url;
+
+      a.download =
+        "RKG_EDITZ_Edited_Video.webm";
+
+      a.click();
+
+      URL.revokeObjectURL(url);
+    };
+
+    recorder.start();
+
+    video.play();
+
+    const timer = setInterval(function() {
+
+      if (video.currentTime >= end) {
+
+        clearInterval(timer);
+
+        video.pause();
+
+        recorder.stop();
+      }
+
+    }, 100);
+
+  } catch(error) {
+
+    alert("Video editing/export is not supported in this browser.");
+
+  }
+}
+
 </script>
 
 </body>
