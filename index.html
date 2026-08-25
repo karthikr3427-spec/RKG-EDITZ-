@@ -1,232 +1,916 @@
- <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RKG EDITZ - Video Editor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RKG EDITZ - Photo Video Poster Editor</title>
 
 <style>
+*{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#111;
-  color:white;
-  text-align:center;
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#080808;
+ color:#fff;
+}
+header{
+ text-align:center;
+ padding:22px 10px;
+ background:#000;
+ border-bottom:2px solid #00eaff;
+}
+header h1{
+ margin:0;
+ color:#00eaff;
+ text-shadow:0 0 15px #00eaff;
+}
+header p{color:#aaa}
+
+nav{
+ display:flex;
+ gap:8px;
+ padding:10px;
+ overflow:auto;
+ background:#111;
+ position:sticky;
+ top:0;
+ z-index:10;
+}
+nav button{
+ min-width:120px;
+ padding:12px;
+ border:0;
+ border-radius:10px;
+ background:#222;
+ color:#fff;
+ font-weight:bold;
+}
+nav button.active,
+button:hover{
+ background:#00eaff;
+ color:#000;
 }
 
-.editor{
-  max-width:700px;
-  margin:30px auto;
-  padding:20px;
+.page{
+ display:none;
+ max-width:1000px;
+ margin:auto;
+ padding:15px;
 }
+.page.active{display:block}
 
-h1{
-  color:#00eaff;
+.card{
+ background:#121212;
+ padding:18px;
+ margin-bottom:15px;
+ border-radius:18px;
+ border:1px solid #292929;
 }
 
 .upload{
-  border:2px dashed #00eaff;
-  padding:25px;
-  border-radius:15px;
-  margin-bottom:20px;
+ border:2px dashed #00eaff;
+ padding:25px;
+ text-align:center;
+ border-radius:15px;
 }
 
-input[type="file"]{
-  width:100%;
-  padding:12px;
+input,select{
+ width:100%;
+ padding:12px;
+ margin:6px 0 12px;
+ border:0;
+ border-radius:9px;
+}
+
+input[type=range]{padding:0}
+
+button{
+ padding:11px 14px;
+ margin:4px;
+ border:0;
+ border-radius:9px;
+ background:#00eaff;
+ color:#000;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.danger{background:#ff1744;color:#fff}
+.success{background:#00c853;color:#fff}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:8px;
+}
+
+canvas{
+ max-width:100%;
+ background:#222;
+ border-radius:12px;
+ display:block;
+ margin:15px auto;
 }
 
 video{
-  width:100%;
-  max-height:400px;
-  margin-top:20px;
-  border-radius:15px;
-  background:#000;
-}
-
-.controls{
-  margin-top:20px;
-  display:grid;
-  gap:12px;
-}
-
-button{
-  padding:12px;
-  border:0;
-  border-radius:10px;
-  background:#00eaff;
-  color:#000;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-button:hover{
-  transform:scale(1.03);
+ width:100%;
+ max-height:500px;
+ background:#000;
+ border-radius:12px;
 }
 
 label{
-  text-align:left;
+ display:block;
+ margin-top:10px;
+ font-weight:bold;
+ color:#ddd;
 }
 
-input[type="range"]{
-  width:100%;
+.fontPreview{
+ padding:15px;
+ text-align:center;
+ background:#222;
+ border-radius:10px;
+ margin-top:10px;
+}
+
+.footer{
+ text-align:center;
+ padding:25px;
+ color:#777;
 }
 </style>
 </head>
 
 <body>
 
-<div class="editor">
+<header>
+<h1>🎬 RKG EDITZ</h1>
+<p>Photo • Video • Poster • Fonts • Effects</p>
+</header>
 
-<h1>🎬 RKG EDITZ VIDEO EDITOR</h1>
+<nav>
+<button onclick="openPage('photo',this)" class="active">📸 Photo</button>
+<button onclick="openPage('video',this)">🎬 Video</button>
+<button onclick="openPage('poster',this)">🖼️ Poster</button>
+<button onclick="openPage('font',this)">🔤 Fonts</button>
+<button onclick="openPage('effects',this)">✨ Effects</button>
+</nav>
+
+
+<!-- PHOTO EDITOR -->
+
+<section id="photo" class="page active">
+
+<div class="card">
+<h2>📸 Photo Editor</h2>
 
 <div class="upload">
-  <p>📁 Select Your Video</p>
-  <input type="file" id="videoInput" accept="video/*">
+<input type="file" id="photoInput" accept="image/*">
 </div>
 
-<video id="video" controls></video>
+<canvas id="photoCanvas"></canvas>
 
-<div class="controls">
+<label>🌞 Brightness</label>
+<input type="range" id="pBright" min="50" max="200" value="100">
 
-<label>
-🌞 Brightness
-<input type="range" id="brightness" min="50" max="200" value="100">
-</label>
+<label>🎨 Contrast</label>
+<input type="range" id="pContrast" min="50" max="200" value="100">
 
-<label>
-🎨 Contrast
-<input type="range" id="contrast" min="50" max="200" value="100">
-</label>
+<label>🌈 Saturation</label>
+<input type="range" id="pSaturate" min="0" max="200" value="100">
 
-<label>
-🌈 Saturation
-<input type="range" id="saturation" min="0" max="200" value="100">
-</label>
+<label>🌫️ Blur</label>
+<input type="range" id="pBlur" min="0" max="10" value="0">
 
-<label>
-🎬 Video Speed
-<input type="range" id="speed" min="0.25" max="2" step="0.25" value="1">
-</label>
+<div class="grid">
+<button onclick="photoFilter('normal')">Normal</button>
+<button onclick="photoFilter('cinematic')">🎬 Cinematic</button>
+<button onclick="photoFilter('bw')">🖤 B&W</button>
+<button onclick="photoFilter('vivid')">🔥 Vivid</button>
+<button onclick="rotatePhoto()">🔄 Rotate</button>
+<button class="danger" onclick="resetPhoto()">♻️ Reset</button>
+</div>
 
-<button onclick="filterNormal()">Normal</button>
-<button onclick="filterCinematic()">🎬 Cinematic</button>
-<button onclick="filterBlack()">🖤 Black & White</button>
-<button onclick="filterVivid()">🔥 Vivid</button>
+<button class="success" onclick="downloadPhoto()">
+💾 Download Photo
+</button>
+</div>
+
+</section>
+
+
+<!-- VIDEO EDITOR -->
+
+<section id="video" class="page">
+
+<div class="card">
+
+<h2>🎬 Video Editor</h2>
+
+<div class="upload">
+<input type="file" id="videoInput" accept="video/*">
+</div>
+
+<video id="videoPlayer" controls playsinline></video>
+
+<label>🌞 Brightness</label>
+<input type="range" id="vBright" min="50" max="200" value="100">
+
+<label>🎨 Contrast</label>
+<input type="range" id="vContrast" min="50" max="200" value="100">
+
+<label>🌈 Saturation</label>
+<input type="range" id="vSaturate" min="0" max="200" value="100">
+
+<label>⚡ Speed</label>
+<input type="range" id="vSpeed" min=".25" max="2" step=".25" value="1">
+
+<div class="grid">
+<button onclick="videoFilter('normal')">Normal</button>
+<button onclick="videoFilter('cinematic')">🎬 Cinematic</button>
+<button onclick="videoFilter('vivid')">🔥 Vivid</button>
+<button onclick="videoFilter('bw')">🖤 B&W</button>
 <button onclick="rotateVideo()">🔄 Rotate</button>
-<button onclick="resetEdit()">♻️ Reset</button>
+<button class="danger" onclick="resetVideo()">♻️ Reset</button>
+</div>
+
+<p id="videoStatus">Upload a video to start editing.</p>
 
 </div>
 
+</section>
+
+
+<!-- POSTER MAKER -->
+
+<section id="poster" class="page">
+
+<div class="card">
+
+<h2>🖼️ Poster Maker</h2>
+
+<input type="text" id="posterText"
+placeholder="Enter Poster Text">
+
+<label>🔤 Font</label>
+<select id="posterFont">
+<option>Arial</option>
+<option>Impact</option>
+<option>Georgia</option>
+<option>Verdana</option>
+<option>Courier New</option>
+<option>Trebuchet MS</option>
+</select>
+
+<label>📏 Font Size</label>
+<input type="range" id="posterSize"
+min="20" max="150" value="60">
+
+<label>🎨 Text Color</label>
+<input type="color" id="posterColor" value="#00eaff">
+
+<label>🌑 Background</label>
+<input type="color" id="posterBg" value="#111111">
+
+<div class="grid">
+<button onclick="posterEffect('normal')">Normal</button>
+<button onclick="posterEffect('glow')">✨ Glow</button>
+<button onclick="posterEffect('shadow')">🌑 Shadow</button>
+<button onclick="posterEffect('neon')">💡 Neon</button>
 </div>
+
+<canvas id="posterCanvas" width="1080" height="1080"></canvas>
+
+<button class="success" onclick="downloadPoster()">
+💾 Download Poster
+</button>
+
+</div>
+
+</section>
+
+
+<!-- FONT STUDIO -->
+
+<section id="font" class="page">
+
+<div class="card">
+
+<h2>🔤 Font Studio</h2>
+
+<input
+id="fontText"
+type="text"
+placeholder="Type your text">
+
+<select id="fontSelect">
+<option value="Arial">Arial</option>
+<option value="Impact">Impact</option>
+<option value="Georgia">Georgia</option>
+<option value="Verdana">Verdana</option>
+<option value="Courier New">Courier</option>
+<option value="Trebuchet MS">Trebuchet</option>
+</select>
+
+<label>Font Size</label>
+<input
+type="range"
+id="fontSize"
+min="15"
+max="100"
+value="40">
+
+<label>Text Color</label>
+<input
+type="color"
+id="fontColor"
+value="#ffffff">
+
+<div
+id="fontPreview"
+class="fontPreview">
+RKG EDITZ
+</div>
+
+<button onclick="fontStyle('normal')">Normal</button>
+<button onclick="fontStyle('bold')">Bold</button>
+<button onclick="fontStyle('italic')">Italic</button>
+<button onclick="fontStyle('glow')">✨ Glow</button>
+
+</div>
+
+</section>
+
+
+<!-- EFFECTS -->
+
+<section id="effects" class="page">
+
+<div class="card">
+
+<h2>✨ Effects Studio</h2>
+
+<p>Photo/Poster effects:</p>
+
+<div class="grid">
+
+<button onclick="globalEffect('none')">
+Normal
+</button>
+
+<button onclick="globalEffect('glow')">
+✨ Glow
+</button>
+
+<button onclick="globalEffect('neon')">
+💡 Neon
+</button>
+
+<button onclick="globalEffect('cinematic')">
+🎬 Cinematic
+</button>
+
+<button onclick="globalEffect('vintage')">
+📽️ Vintage
+</button>
+
+<button onclick="globalEffect('dramatic')">
+🔥 Dramatic
+</button>
+
+</div>
+
+<p>
+These effects are applied to the active canvas preview.
+</p>
+
+</div>
+
+</section>
+
+
+<div class="footer">
+RKG EDITZ © 2026
+</div>
+
 
 <script>
 
-const video = document.getElementById("video");
-const videoInput = document.getElementById("videoInput");
+/* PAGE SWITCH */
 
-const brightness = document.getElementById("brightness");
-const contrast = document.getElementById("contrast");
-const saturation = document.getElementById("saturation");
+function openPage(id,btn){
 
-let rotation = 0;
+ document.querySelectorAll(".page")
+ .forEach(x=>x.classList.remove("active"));
 
-videoInput.addEventListener("change", function(){
+ document.getElementById(id)
+ .classList.add("active");
 
-  const file = this.files[0];
+ document.querySelectorAll("nav button")
+ .forEach(x=>x.classList.remove("active"));
 
-  if(file){
-    video.src = URL.createObjectURL(file);
-    video.load();
-  }
+ btn.classList.add("active");
+
+}
+
+
+/* PHOTO EDITOR */
+
+const photoCanvas=
+document.getElementById("photoCanvas");
+
+const pctx=
+photoCanvas.getContext("2d");
+
+let photoImage=null;
+let photoRotation=0;
+
+document.getElementById("photoInput")
+.addEventListener("change",function(){
+
+ const file=this.files[0];
+
+ if(!file)return;
+
+ const img=new Image();
+
+ img.onload=function(){
+
+  photoImage=img;
+
+  photoCanvas.width=img.width;
+  photoCanvas.height=img.height;
+
+  drawPhoto();
+
+ };
+
+ img.src=URL.createObjectURL(file);
 
 });
 
-function applyFilter(){
 
-  video.style.filter =
-  `brightness(${brightness.value}%)
-   contrast(${contrast.value}%)
-   saturate(${saturation.value}%)`;
+function drawPhoto(){
+
+ if(!photoImage)return;
+
+ pctx.save();
+
+ pctx.clearRect(
+ 0,0,
+ photoCanvas.width,
+ photoCanvas.height
+ );
+
+ pctx.filter=
+ `brightness(${pBright.value}%)
+  contrast(${pContrast.value}%)
+  saturate(${pSaturate.value}%)
+  blur(${pBlur.value}px)`;
+
+ pctx.translate(
+ photoCanvas.width/2,
+ photoCanvas.height/2
+ );
+
+ pctx.rotate(
+ photoRotation*Math.PI/180
+ );
+
+ pctx.drawImage(
+ photoImage,
+ -photoImage.width/2,
+ -photoImage.height/2
+ );
+
+ pctx.restore();
 
 }
 
-brightness.addEventListener("input", applyFilter);
-contrast.addEventListener("input", applyFilter);
-saturation.addEventListener("input", applyFilter);
 
-document.getElementById("speed").addEventListener("input", function(){
-  video.playbackRate = this.value;
+const pBright=
+document.getElementById("pBright");
+
+const pContrast=
+document.getElementById("pContrast");
+
+const pSaturate=
+document.getElementById("pSaturate");
+
+const pBlur=
+document.getElementById("pBlur");
+
+[pBright,pContrast,pSaturate,pBlur]
+.forEach(x=>x.addEventListener("input",drawPhoto));
+
+
+function photoFilter(type){
+
+ if(type==="normal"){
+  pBright.value=100;
+  pContrast.value=100;
+  pSaturate.value=100;
+ }
+
+ if(type==="cinematic"){
+  pBright.value=90;
+  pContrast.value=145;
+  pSaturate.value=115;
+ }
+
+ if(type==="bw"){
+  pBright.value=100;
+  pContrast.value=125;
+  pSaturate.value=0;
+ }
+
+ if(type==="vivid"){
+  pBright.value=110;
+  pContrast.value=135;
+  pSaturate.value=180;
+ }
+
+ drawPhoto();
+
+}
+
+
+function rotatePhoto(){
+
+ photoRotation+=90;
+
+ drawPhoto();
+
+}
+
+
+function resetPhoto(){
+
+ photoRotation=0;
+
+ pBright.value=100;
+ pContrast.value=100;
+ pSaturate.value=100;
+ pBlur.value=0;
+
+ drawPhoto();
+
+}
+
+
+function downloadPhoto(){
+
+ const a=document.createElement("a");
+
+ a.download="RKG-EDITZ-photo.png";
+
+ a.href=photoCanvas.toDataURL("image/png");
+
+ a.click();
+
+}
+
+
+/* VIDEO */
+
+const video=
+document.getElementById("videoPlayer");
+
+document.getElementById("videoInput")
+.addEventListener("change",function(){
+
+ const file=this.files[0];
+
+ if(!file)return;
+
+ video.src=URL.createObjectURL(file);
+
+ document.getElementById("videoStatus")
+ .innerText="✅ Video loaded";
+
 });
 
-function filterNormal(){
 
-  brightness.value = 100;
-  contrast.value = 100;
-  saturation.value = 100;
+const vBright=
+document.getElementById("vBright");
 
-  applyFilter();
+const vContrast=
+document.getElementById("vContrast");
 
-}
+const vSaturate=
+document.getElementById("vSaturate");
 
-function filterCinematic(){
+const vSpeed=
+document.getElementById("vSpeed");
 
-  brightness.value = 90;
-  contrast.value = 140;
-  saturation.value = 120;
 
-  applyFilter();
+function applyVideo(){
 
-}
+ video.style.filter=
+ `brightness(${vBright.value}%)
+  contrast(${vContrast.value}%)
+  saturate(${vSaturate.value}%)`;
 
-function filterBlack(){
-
-  brightness.value = 100;
-  contrast.value = 120;
-  saturation.value = 0;
-
-  applyFilter();
+ video.playbackRate=vSpeed.value;
 
 }
 
-function filterVivid(){
+[vBright,vContrast,vSaturate,vSpeed]
+.forEach(x=>x.addEventListener("input",applyVideo));
 
-  brightness.value = 110;
-  contrast.value = 130;
-  saturation.value = 180;
 
-  applyFilter();
-
-}
+let videoRotation=0;
 
 function rotateVideo(){
 
-  rotation += 90;
+ videoRotation+=90;
 
-  video.style.transform =
-  `rotate(${rotation}deg)`;
+ video.style.transform=
+ `rotate(${videoRotation}deg)`;
 
 }
 
-function resetEdit(){
 
-  brightness.value = 100;
-  contrast.value = 100;
-  saturation.value = 100;
+function videoFilter(type){
 
-  document.getElementById("speed").value = 1;
+ if(type==="normal"){
+  vBright.value=100;
+  vContrast.value=100;
+  vSaturate.value=100;
+ }
 
-  video.playbackRate = 1;
+ if(type==="cinematic"){
+  vBright.value=90;
+  vContrast.value=145;
+  vSaturate.value=115;
+ }
 
-  rotation = 0;
+ if(type==="vivid"){
+  vBright.value=110;
+  vContrast.value=135;
+  vSaturate.value=180;
+ }
 
-  video.style.transform = "rotate(0deg)";
+ if(type==="bw"){
+  vBright.value=100;
+  vContrast.value=125;
+  vSaturate.value=0;
+ }
 
-  applyFilter();
+ applyVideo();
+
+}
+
+
+function resetVideo(){
+
+ vBright.value=100;
+ vContrast.value=100;
+ vSaturate.value=100;
+ vSpeed.value=1;
+
+ videoRotation=0;
+
+ video.style.transform="rotate(0deg)";
+
+ applyVideo();
+
+}
+
+
+/* POSTER */
+
+const posterCanvas=
+document.getElementById("posterCanvas");
+
+const pctx2=
+posterCanvas.getContext("2d");
+
+let posterMode="normal";
+
+function drawPoster(){
+
+ const text=
+ document.getElementById("posterText").value
+ ||"RKG EDITZ";
+
+ const font=
+ document.getElementById("posterFont").value;
+
+ const size=
+ document.getElementById("posterSize").value;
+
+ const color=
+ document.getElementById("posterColor").value;
+
+ const bg=
+ document.getElementById("posterBg").value;
+
+ pctx2.clearRect(
+ 0,0,1080,1080
+ );
+
+ pctx2.fillStyle=bg;
+
+ pctx2.fillRect(
+ 0,0,1080,1080
+ );
+
+ pctx2.textAlign="center";
+ pctx2.textBaseline="middle";
+
+ pctx2.font=
+ `bold ${size}px ${font}`;
+
+ pctx2.fillStyle=color;
+
+ if(posterMode==="glow"){
+  pctx2.shadowBlur=35;
+  pctx2.shadowColor=color;
+ }
+
+ if(posterMode==="neon"){
+  pctx2.shadowBlur=50;
+  pctx2.shadowColor=color;
+ }
+
+ if(posterMode==="shadow"){
+  pctx2.shadowBlur=10;
+  pctx2.shadowOffsetX=8;
+  pctx2.shadowOffsetY=8;
+  pctx2.shadowColor="#000";
+ }
+
+ pctx2.fillText(
+ text,
+ 540,
+ 540
+ );
+
+ pctx2.shadowBlur=0;
+
+}
+
+
+[
+"posterText",
+"posterFont",
+"posterSize",
+"posterColor",
+"posterBg"
+].forEach(id=>{
+
+ document.getElementById(id)
+ .addEventListener("input",drawPoster);
+
+});
+
+
+function posterEffect(type){
+
+ posterMode=type;
+
+ drawPoster();
+
+}
+
+
+function downloadPoster(){
+
+ const a=document.createElement("a");
+
+ a.download="RKG-EDITZ-poster.png";
+
+ a.href=
+ posterCanvas.toDataURL("image/png");
+
+ a.click();
+
+}
+
+drawPoster();
+
+
+/* FONT STUDIO */
+
+const fontText=
+document.getElementById("fontText");
+
+const fontSelect=
+document.getElementById("fontSelect");
+
+const fontSize=
+document.getElementById("fontSize");
+
+const fontColor=
+document.getElementById("fontColor");
+
+const fontPreview=
+document.getElementById("fontPreview");
+
+
+function updateFont(){
+
+ fontPreview.innerText=
+ fontText.value||"RKG EDITZ";
+
+ fontPreview.style.fontFamily=
+ fontSelect.value;
+
+ fontPreview.style.fontSize=
+ fontSize.value+"px";
+
+ fontPreview.style.color=
+ fontColor.value;
+
+}
+
+
+[fontText,fontSelect,fontSize,fontColor]
+.forEach(x=>x.addEventListener(
+"input",updateFont
+));
+
+
+function fontStyle(type){
+
+ fontPreview.style.fontWeight=
+ type==="bold"?"bold":"normal";
+
+ fontPreview.style.fontStyle=
+ type==="italic"?"italic":"normal";
+
+ if(type==="glow"){
+
+  fontPreview.style.textShadow=
+  `0 0 10px ${fontColor.value},
+   0 0 25px ${fontColor.value}`;
+
+ }else{
+
+  fontPreview.style.textShadow="none";
+
+ }
+
+}
+
+
+updateFont();
+
+
+/* GLOBAL EFFECT */
+
+function globalEffect(type){
+
+ if(!photoImage){
+
+  alert("First upload a photo in Photo Editor.");
+
+  return;
+
+ }
+
+ if(type==="none"){
+  pBlur.value=0;
+ }
+
+ if(type==="glow"){
+  pBright.value=110;
+  pContrast.value=120;
+  pSaturate.value=140;
+  pBlur.value=0;
+ }
+
+ if(type==="neon"){
+  pBright.value=120;
+  pContrast.value=160;
+  pSaturate.value=180;
+ }
+
+ if(type==="cinematic"){
+  pBright.value=90;
+  pContrast.value=150;
+  pSaturate.value=110;
+ }
+
+ if(type==="vintage"){
+  pBright.value=95;
+  pContrast.value=110;
+  pSaturate.value=65;
+ }
+
+ if(type==="dramatic"){
+  pBright.value=90;
+  pContrast.value=180;
+  pSaturate.value=130;
+ }
+
+ drawPhoto();
 
 }
 
 </script>
 
 </body>
-</html>>
+ </html>
