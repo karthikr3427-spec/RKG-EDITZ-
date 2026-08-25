@@ -1,22 +1,105 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RKG EDITZ</title><meta name="description" content="RKG EDITZ - Video, Photo, Reels and creative editing studio.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RKG EDITZ - Photo, Reels and Creative Editing Studio</title>
 <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-<header class="topbar"><div class="brand"><img src="assets/rkg_editz_logo.png" alt="RKG EDITZ logo"><span>RKG EDITZ</span></div><button class="icon" onclick="alert('RKG EDITZ')">☰</button></header>
+
+<header class="topbar">
+  <div class="brand">
+    <span>RKG EDITZ</span>
+  </div>
+
+  <nav>
+    <a href="#services">SERVICES</a>
+    <a href="#quick-tools">QUICK TOOLS</a>
+    <a href="#projects">PROJECTS</a>
+  </nav>
+</header>
+
+<section class="hero-logo">
+  <h1>RKG EDITZ</h1>
+  <p>Creative Photo, Reels and Video Editing Studio</p>
+  <a href="#services" class="service-btn">VIEW SERVICES</a>
+</section>
+
 <main>
-<section class="hero"><img class="hero-logo" src="assets/rkg_editz_logo.png" alt="RKG EDITZ"><h1>RKG EDITZ</h1><p>Creative video & photo editing for reels, promotions and social media.</p><a class="primary" href="#services">START EDITING →</a></section>
-<section id="services"><h2>EDIT</h2><div class="grid">
-<button class="card" onclick="showMsg('Video Edit')"><span>🎬</span><b>Video Edit</b><small>Trim & cut</small></button>
-<button class="card" onclick="showMsg('Photo Edit')"><span>🖼️</span><b>Photo Edit</b><small>HD photo tools</small></button>
-<button class="card" onclick="showMsg('Templates')"><span>✨</span><b>Templates</b><small>Reels templates</small></button>
-<button class="card" onclick="showMsg('Music')"><span>🎵</span><b>Music</b><small>Add your music</small></button>
-</div></section>
-<section><h2>QUICK TOOLS</h2><div class="chips"><span>✂️ Trim</span><span>🔀 Split</span><span>🔤 Text</span><span>✨ Effects</span><span>🎚️ Filters</span><span>⚡ Speed</span></div></section>
-<section><h2>MY PROJECTS</h2><div class="project"><span>▶</span><div><b>New Project</b><small>Ready to edit</small></div></div><div class="project"><span>▶</span><div><b>RKG Promo</b><small>30 sec</small></div></div></section>
-</main><footer>© 2026 RKG EDITZ · Creative Editing Studio</footer>
-<script>function showMsg(x){alert(x+' selected — RKG EDITZ');}</script>
-</body></html>
+
+<section id="services">
+  <h2>OUR SERVICES</h2>
+
+  <div class="cards">
+
+    <button class="card" onclick="showMsg('Video Editing')">
+      🎬 <b>Video Editing</b>
+      <small>Trim, Cut & Creative Editing</small>
+    </button>
+
+    <button class="card" onclick="showMsg('Photo Editing')">
+      🖼️ <b>Photo Editing</b>
+      <small>HD, 4K & 8K Photo Editing</small>
+    </button>
+
+    <button class="card" onclick="showMsg('3D Editing')">
+      ✨ <b>3D Editing</b>
+      <small>3D, HD & Cinematic Effects</small>
+    </button>
+
+    <button class="card" onclick="showMsg('Reels Editing')">
+      📱 <b>Reels Editing</b>
+      <small>Instagram Reels & Shorts</small>
+    </button>
+
+    <button class="card" onclick="showMsg('Poster Design')">
+      🎨 <b>Poster Design</b>
+      <small>Posters, Banners & Designs</small>
+    </button>
+
+    <button class="card" onclick="showMsg('Music Editing')">
+      🎵 <b>Music Editing</b>
+      <small>Add Music & Creative Effects</small>
+    </button>
+
+  </div>
+</section>
+
+<section id="quick-tools">
+  <h2>QUICK TOOLS</h2>
+  <div class="chips">
+    <span>✂️ Trim</span>
+    <span>✂️ Split</span>
+    <span>📝 Text</span>
+    <span>✨ Effects</span>
+    <span>🎵 Music</span>
+  </div>
+</section>
+
+<section id="projects">
+  <h2>MY PROJECTS</h2>
+  <div class="project">
+    <span>📁</span>
+    <div>
+      <b>New Project</b>
+      <small>Ready to edit</small>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  © 2026 RKG EDITZ - Creative Editing Studio
+</footer>
+
+<script>
+function showMsg(service) {
+  alert("RKG EDITZ - " + service + " selected!");
+}
+</script>
+
+</body>
+</html>
