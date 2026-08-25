@@ -2,359 +2,604 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RKG EDITZ Video Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RKG EDITZ - Video Editor</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#080808;color:white;font-family:Arial}
-.header{
-  height:60px;background:#111;display:flex;align-items:center;
-  padding:8px 15px;border-bottom:1px solid #333
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
 }
-.logo{width:44px;height:44px;object-fit:contain;margin-right:10px}
-.header h2{font-size:20px}
+
+body{
+  background:#080808;
+  color:white;
+  min-height:100vh;
+}
+
+.header{
+  height:62px;
+  background:#111;
+  display:flex;
+  align-items:center;
+  padding:8px 14px;
+  border-bottom:1px solid #292929;
+}
+
+.logo{
+  width:46px;
+  height:46px;
+  object-fit:contain;
+  border-radius:50%;
+  margin-right:10px;
+}
+
+.header h2{
+  font-size:20px;
+}
+
+.editor{
+  max-width:900px;
+  margin:auto;
+}
 
 .preview{
-  height:430px;background:#000;
-  display:flex;justify-content:center;align-items:center;
-  position:relative;overflow:hidden
-}
-#video{max-width:100%;max-height:420px}
-#textLayer{
-  position:absolute;top:45%;left:50%;
-  transform:translate(-50%,-50%);
-  font-size:32px;font-weight:bold;
-  color:white;text-shadow:2px 2px 5px #000;
-  pointer-events:none
+  width:100%;
+  height:430px;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
 }
 
-.upload{
-  position:absolute;z-index:5;
-  text-align:center
+#canvas{
+  max-width:100%;
+  max-height:420px;
+  display:none;
+  background:#000;
 }
-.upload button,.export{
-  background:#ff0050;color:white;border:0;
-  padding:13px 22px;border-radius:8px;
-  font-size:16px
+
+#welcome{
+  text-align:center;
 }
-input{display:none}
+
+.addBtn{
+  margin-top:15px;
+  background:#ff0050;
+  color:white;
+  border:0;
+  padding:14px 25px;
+  border-radius:9px;
+  font-size:16px;
+  font-weight:bold;
+}
+
+input[type=file]{
+  display:none;
+}
 
 .tools{
-  display:flex;overflow-x:auto;gap:8px;
-  background:#111;padding:12px
+  display:flex;
+  overflow-x:auto;
+  gap:8px;
+  background:#111;
+  padding:10px;
 }
+
 .tool{
-  min-width:75px;background:#202020;
-  padding:10px 5px;text-align:center;
-  border-radius:8px
+  min-width:75px;
+  background:#202020;
+  border-radius:9px;
+  padding:10px 5px;
+  text-align:center;
+  border:1px solid #292929;
 }
-.tool span{display:block;font-size:22px;margin-bottom:5px}
+
+.tool:active{
+  transform:scale(.95);
+}
+
+.tool span{
+  display:block;
+  font-size:23px;
+  margin-bottom:5px;
+}
 
 .panel{
-  background:#151515;padding:15px;
-  display:none
+  display:none;
+  background:#151515;
+  padding:14px;
+  border-top:1px solid #292929;
 }
-.panel input[type=range]{
-  display:block;width:100%;margin:12px 0
+
+.panel h3{
+  margin-bottom:12px;
 }
+
 .panel button{
-  background:#292929;color:white;
-  border:0;padding:9px 13px;
-  border-radius:6px;margin:4px
+  background:#292929;
+  color:white;
+  border:0;
+  padding:9px 13px;
+  border-radius:7px;
+  margin:4px;
+}
+
+.panel button.active{
+  background:#ff0050;
+}
+
+.textInput{
+  width:100%;
+  padding:11px;
+  background:#222;
+  border:1px solid #444;
+  color:white;
+  border-radius:7px;
+  margin-bottom:8px;
+}
+
+.range{
+  width:100%;
+  margin:10px 0;
+}
+
+.timeline{
+  background:#0e0e0e;
+  padding:15px;
+}
+
+.timeline h3{
+  margin-bottom:10px;
+}
+
+.timeRow{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:#aaa;
 }
 
 .controls{
-  display:flex;justify-content:center;
-  gap:8px;padding:12px;background:#111
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px;
+  background:#111;
+  padding:14px;
 }
-.controls button{
-  background:#292929;color:white;
-  border:0;padding:10px 15px;border-radius:7px
+
+.controlBtn{
+  background:#292929;
+  color:white;
+  border:0;
+  padding:11px 17px;
+  border-radius:8px;
+}
+
+.export{
+  background:#ff0050;
+}
+
+.status{
+  text-align:center;
+  background:#111;
+  padding:10px;
+  color:#aaa;
+  font-size:13px;
+}
+
+#downloadLink{
+  display:none;
+  text-align:center;
+  padding:14px;
+  background:#111;
+}
+
+#downloadLink a{
+  background:#00b894;
+  color:white;
+  padding:12px 20px;
+  border-radius:8px;
+  text-decoration:none;
+  display:inline-block;
 }
 </style>
 </head>
 
 <body>
 
+<div class="editor">
+
 <header class="header">
-<img src="rkg_editz_logo.png" class="logo">
+
+<img src="rkg_editz_logo.png"
+     class="logo"
+     onerror="this.style.display='none'">
+
 <h2>RKG EDITZ</h2>
+
 </header>
 
 <div class="preview">
 
-<div class="upload" id="upload">
-  <p style="margin-bottom:12px">🎬 Select Your Video</p>
-  <label>
-    <button>＋ Add Video</button>
-    <input type="file" id="videoFile" accept="video/*">
-  </label>
+<div id="welcome">
+
+<h2>🎬 RKG EDITZ</h2>
+
+<p style="margin-top:8px;color:#aaa">
+Create your video
+</p>
+
+<label>
+<button class="addBtn">＋ Add Video</button>
+<input type="file"
+       id="videoInput"
+       accept="video/*">
+</label>
+
 </div>
 
-<video id="video" playsinline></video>
-
-<div id="textLayer"></div>
+<canvas id="canvas"></canvas>
 
 </div>
+
+
+<!-- TOOLS -->
 
 <div class="tools">
 
-<div class="tool" onclick="openPanel('music')">
-<span>🎵</span>Song
+<div class="tool" onclick="openPanel('musicPanel')">
+<span>🎵</span>
+Song
 </div>
 
-<div class="tool" onclick="openPanel('effect')">
-<span>✨</span>Effects
+<div class="tool" onclick="openPanel('effectPanel')">
+<span>✨</span>
+Effects
 </div>
 
-<div class="tool" onclick="openPanel('text')">
-<span>📝</span>Text
+<div class="tool" onclick="openPanel('filterPanel')">
+<span>🎨</span>
+Filters
 </div>
 
-<div class="tool" onclick="openPanel('speed')">
-<span>⚡</span>Speed
+<div class="tool" onclick="openPanel('textPanel')">
+<span>📝</span>
+Text
 </div>
 
-<div class="tool" onclick="openPanel('filter')">
-<span>🎨</span>Filter
+<div class="tool" onclick="openPanel('speedPanel')">
+<span>⚡</span>
+Speed
+</div>
+
+<div class="tool" onclick="openPanel('trimPanel')">
+<span>✂️</span>
+Trim
 </div>
 
 </div>
+
 
 <!-- MUSIC -->
 
-<div class="panel" id="music">
+<div class="panel" id="musicPanel">
+
 <h3>🎵 Add Song</h3>
 
 <label>
-<button>Choose Song</button>
-<input type="file" id="audioFile" accept="audio/*">
+<button>＋ Choose Song</button>
+
+<input type="file"
+       id="audioInput"
+       accept="audio/*">
 </label>
 
-<p id="songName" style="margin-top:10px"></p>
+<p id="songName"
+   style="margin-top:10px;color:#aaa">
+No song selected
+</p>
+
+<button onclick="removeSong()">
+Remove Song
+</button>
+
 </div>
+
 
 <!-- EFFECTS -->
 
-<div class="panel" id="effect">
+<div class="panel" id="effectPanel">
+
 <h3>✨ Effects</h3>
 
-<button onclick="effect('none')">Normal</button>
-<button onclick="effect('gray')">B&W</button>
-<button onclick="effect('bright')">Bright</button>
-<button onclick="effect('contrast')">Contrast</button>
-<button onclick="effect('vintage')">Vintage</button>
-<button onclick="effect('blur')">Blur</button>
+<button onclick="setEffect('none',this)">
+Normal
+</button>
+
+<button onclick="setEffect('brightness',this)">
+☀️ Bright
+</button>
+
+<button onclick="setEffect('contrast',this)">
+◐ Contrast
+</button>
+
+<button onclick="setEffect('blur',this)">
+💨 Blur
+</button>
+
+<button onclick="setEffect('sepia',this)">
+🟤 Sepia
+</button>
+
+<button onclick="setEffect('invert',this)">
+🔄 Invert
+</button>
+
 </div>
+
+
+<!-- FILTERS -->
+
+<div class="panel" id="filterPanel">
+
+<h3>🎨 Filters</h3>
+
+<button onclick="setFilter('none',this)">
+Original
+</button>
+
+<button onclick="setFilter('grayscale',this)">
+B&W
+</button>
+
+<button onclick="setFilter('warm',this)">
+Warm
+</button>
+
+<button onclick="setFilter('cool',this)">
+Cool
+</button>
+
+<button onclick="setFilter('cinematic',this)">
+Cinematic
+</button>
+
+<button onclick="setFilter('dark',this)">
+Dark
+</button>
+
+</div>
+
 
 <!-- TEXT -->
 
-<div class="panel" id="text">
+<div class="panel" id="textPanel">
+
 <h3>📝 Add Text</h3>
 
-<input
- id="textInput"
- type="text"
- placeholder="Enter text"
- style="display:block;width:100%;padding:10px"
->
+<input class="textInput"
+       id="textInput"
+       placeholder="Type your text">
 
-<button onclick="addText()">Add Text</button>
-<button onclick="removeText()">Remove</button>
+<button onclick="applyText()">
+Add Text
+</button>
+
+<button onclick="removeText()">
+Remove Text
+</button>
+
+<br>
+
+<label>Text Size</label>
+
+<input class="range"
+       type="range"
+       id="textSize"
+       min="15"
+       max="80"
+       value="35"
+       oninput="applyText()">
+
 </div>
+
 
 <!-- SPEED -->
 
-<div class="panel" id="speed">
-<h3>⚡ Video Speed</h3>
+<div class="panel" id="speedPanel">
 
-<button onclick="speed(0.5)">0.5x</button>
-<button onclick="speed(1)">1x</button>
-<button onclick="speed(1.5)">1.5x</button>
-<button onclick="speed(2)">2x</button>
+<h3>⚡ Speed</h3>
+
+<button onclick="setSpeed(.5)">
+0.5x
+</button>
+
+<button onclick="setSpeed(1)">
+1x
+</button>
+
+<button onclick="setSpeed(1.5)">
+1.5x
+</button>
+
+<button onclick="setSpeed(2)">
+2x
+</button>
+
 </div>
 
-<!-- FILTER -->
 
-<div class="panel" id="filter">
-<h3>🎨 Filters</h3>
+<!-- TRIM -->
 
-<button onclick="effect('none')">Original</button>
-<button onclick="effect('warm')">Warm</button>
-<button onclick="effect('cool')">Cool</button>
-<button onclick="effect('dark')">Dark</button>
+<div class="panel" id="trimPanel">
+
+<h3>✂️ Trim Video</h3>
+
+<label>Start</label>
+
+<input class="range"
+       type="range"
+       id="startRange"
+       min="0"
+       value="0"
+       step="0.1">
+
+<label>End</label>
+
+<input class="range"
+       type="range"
+       id="endRange"
+       min="0"
+       value="0"
+       step="0.1">
+
+<p class="timeRow">
+<span id="startText">Start: 0s</span>
+<span id="endText">End: 0s</span>
+</p>
+
 </div>
+
+
+<!-- TIMELINE -->
+
+<div class="timeline">
+
+<h3>Timeline</h3>
+
+<input class="range"
+       type="range"
+       id="seekRange"
+       min="0"
+       max="0"
+       value="0"
+       step="0.1">
+
+<div class="timeRow">
+<span id="currentTime">0:00</span>
+<span id="duration">0:00</span>
+</div>
+
+</div>
+
+
+<!-- CONTROLS -->
 
 <div class="controls">
 
-<button onclick="playVideo()">▶️</button>
-<button onclick="pauseVideo()">⏸️</button>
-<button onclick="video.currentTime=0">↩️</button>
+<button class="controlBtn"
+        onclick="playVideo()">
+▶ Play
+</button>
 
-<button class="export" onclick="exportVideo()">
+<button class="controlBtn"
+        onclick="pauseVideo()">
+⏸ Pause
+</button>
+
+<button class="controlBtn"
+        onclick="resetVideo()">
+↩ Reset
+</button>
+
+<button class="controlBtn export"
+        onclick="exportVideo()">
 💾 Export
 </button>
 
 </div>
 
-<audio id="musicAudio"></audio>
+<div class="status"
+     id="status">
+Ready — Add a video
+</div>
+
+<div id="downloadLink"></div>
+
+</div>
+
+
+<!-- HIDDEN VIDEO/AUDIO -->
+
+<video id="video"
+       playsinline
+       preload="auto"
+       style="display:none">
+</video>
+
+<audio id="music"
+       preload="auto">
+</audio>
+
 
 <script>
 
-const video = document.getElementById("video");
-const upload = document.getElementById("upload");
-const textLayer = document.getElementById("textLayer");
-const musicAudio = document.getElementById("musicAudio");
+const video =
+document.getElementById("video");
 
-let currentEffect = "none";
+const music =
+document.getElementById("music");
 
-/* VIDEO */
+const canvas =
+document.getElementById("canvas");
 
-document.getElementById("videoFile").onchange=function(){
+const ctx =
+canvas.getContext("2d");
 
-const file=this.files[0];
+const videoInput =
+document.getElementById("videoInput");
 
-if(!file)return;
+const audioInput =
+document.getElementById("audioInput");
 
-video.src=URL.createObjectURL(file);
+const welcome =
+document.getElementById("welcome");
 
-video.style.display="block";
+const seekRange =
+document.getElementById("seekRange");
 
-upload.style.display="none";
+const startRange =
+document.getElementById("startRange");
 
-video.load();
+const endRange =
+document.getElementById("endRange");
 
-};
+const statusBox =
+document.getElementById("status");
 
-/* SONG */
+let videoURL = null;
+let audioURL = null;
 
-document.getElementById("audioFile").onchange=function(){
+let effectType = "none";
+let filterType = "none";
 
-const file=this.files[0];
+let textValue = "";
+let textSize = 35;
 
-if(!file)return;
+let speedValue = 1;
 
-musicAudio.src=URL.createObjectURL(file);
+let audioContext = null;
+let videoSource = null;
+let musicSource = null;
+let audioDestination = null;
 
-document.getElementById("songName").innerText =
-"🎵 "+file.name;
+let animationFrame = null;
 
-};
+let exporting = false;
 
-/* PLAY */
 
-function playVideo(){
+/* STATUS */
 
-video.play();
-
-if(musicAudio.src){
-musicAudio.currentTime=video.currentTime;
-musicAudio.play();
+function status(text){
+  statusBox.innerText = text;
 }
 
-}
 
-/* PAUSE */
-
-function pauseVideo(){
-
-video.pause();
-musicAudio.pause();
-
-}
-
-/* SPEED */
-
-function speed(value){
-
-video.playbackRate=value;
-
-}
-
-/* TEXT */
-
-function addText(){
-
-const text=document.getElementById("textInput").value;
-
-textLayer.innerText=text;
-
-}
-
-function removeText(){
-
-textLayer.innerText="";
-
-}
-
-/* EFFECTS */
-
-function effect(type){
-
-currentEffect=type;
-
-if(type=="none")
-video.style.filter="none";
-
-if(type=="gray")
-video.style.filter="grayscale(100%)";
-
-if(type=="bright")
-video.style.filter="brightness(1.4)";
-
-if(type=="contrast")
-video.style.filter="contrast(1.6)";
-
-if(type=="vintage")
-video.style.filter="sepia(70%) contrast(1.2)";
-
-if(type=="blur")
-video.style.filter="blur(3px)";
-
-if(type=="warm")
-video.style.filter="sepia(40%) saturate(1.5)";
-
-if(type=="cool")
-video.style.filter="hue-rotate(180deg)";
-
-if(type=="dark")
-video.style.filter="brightness(.55)";
-
-}
-
-/* PANELS */
-
-function openPanel(id){
-
-document.querySelectorAll(".panel")
-.forEach(p=>p.style.display="none");
-
-document.getElementById(id).style.display="block";
-
-}
-
-/* EXPORT */
-
-async function exportVideo(){
-
-if(!video.src){
-
-alert("ಮೊದಲು Video select ಮಾಡಿ");
-
-return;
-
-}
-
-alert(
-"Preview editing ready! 🎬\n\n"+
-"Video + Effects + Text preview ಆಗುತ್ತದೆ.\n"+
-"Advanced MP4 exportಗಾಗಿ next version ನಲ್ಲಿ FFmpeg ಸೇರಿಸಬಹುದು."
-);
-
-}
-
-</script>
-
-</body>
-</html>
+/* VIDEO
