@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="kn">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>RKG EDITZ</title>
 
 <style>
 *{box-sizing:border-box}
 body{
   margin:0;
+  font-family:Arial,sans-serif;
   background:#111;
   color:white;
-  font-family:Arial,sans-serif;
 }
 header{
   padding:18px;
@@ -25,76 +25,64 @@ header{
   margin:auto;
   padding:15px;
 }
-.video-box{
+.preview{
   background:#000;
-  border-radius:15px;
+  border-radius:12px;
   overflow:hidden;
   margin-bottom:15px;
-  text-align:center;
 }
 video{
   width:100%;
-  max-height:500px;
   display:block;
+  max-height:500px;
 }
 .controls{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(2,1fr);
   gap:10px;
-  margin-top:15px;
 }
 button,label{
-  background:#252525;
+  background:#292929;
   color:white;
-  border:1px solid #444;
-  border-radius:10px;
+  border:0;
   padding:13px;
+  border-radius:8px;
   text-align:center;
   cursor:pointer;
+  font-size:15px;
 }
 button:hover,label:hover{
-  background:#333;
+  background:#444;
 }
-input[type=file]{display:none}
+input[type=file]{
+  display:none;
+}
 .panel{
-  background:#181818;
-  padding:15px;
-  border-radius:15px;
   margin-top:15px;
+  padding:15px;
+  background:#1b1b1b;
+  border-radius:10px;
 }
-.panel h3{margin-top:0}
-input[type=range]{width:100%}
-#textInput{
+input[type=range]{
   width:100%;
-  padding:12px;
-  border-radius:8px;
+}
+select,input[type=text]{
+  width:100%;
+  padding:10px;
+  border-radius:7px;
   border:0;
-  margin-bottom:10px;
-}
-#textLayer{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  font-size:30px;
-  font-weight:bold;
-  text-shadow:2px 2px 5px black;
-  pointer-events:none;
-}
-.preview{
-  position:relative;
+  margin-top:8px;
 }
 .export{
   width:100%;
   margin-top:15px;
   background:#e91e63;
-  border:0;
-  font-size:17px;
+  font-size:18px;
 }
 #status{
   text-align:center;
-  margin-top:10px;
-  color:#aaa;
+  margin-top:12px;
+  color:#00e676;
 }
 </style>
 </head>
@@ -105,70 +93,87 @@ input[type=range]{width:100%}
 
 <div class="container">
 
-<div class="video-box">
-  <div class="preview">
-    <video id="video" controls></video>
-    <div id="textLayer"></div>
-  </div>
+<div class="preview">
+<video id="video" controls></video>
 </div>
 
 <div class="controls">
 
 <label>
-  🎥 Add Video
-  <input type="file" id="videoInput" accept="video/*">
+📁 Add Video
+<input id="videoInput" type="file" accept="video/*">
 </label>
 
 <label>
-  🎵 Add Song
-  <input type="file" id="audioInput" accept="audio/*">
+🎵 Add Song
+<input id="audioInput" type="file" accept="audio/*">
 </label>
 
-<button onclick="togglePlay()">▶️ Play / Pause</button>
+<button id="playBtn">▶️ Play</button>
+<button id="pauseBtn">⏸ Pause</button>
 
-<button onclick="undoVideo()">↩️ Undo</button>
-
-<button onclick="resetVideo()">🔄 Reset</button>
-
-<button onclick="fullscreenVideo()">⛶ Fullscreen</button>
+<button id="resetBtn">↩️ Reset</button>
 
 </div>
 
 <div class="panel">
+
 <h3>⚡ Speed</h3>
-<input type="range" id="speed" min="0.25" max="2" step="0.25" value="1">
-<p id="speedValue">1x</p>
-</div>
 
-<div class="panel">
-<h3>🎨 Filters</h3>
-
-<div class="controls">
-<button onclick="filter('none')">Normal</button>
-<button onclick="filter('grayscale(100%)')">B&W</button>
-<button onclick="filter('sepia(100%)')">Sepia</button>
-<button onclick="filter('brightness(150%)')">Bright</button>
-<button onclick="filter('contrast(180%)')">Contrast</button>
-<button onclick="filter('saturate(200%)')">Color</button>
-</div>
+<select id="speed">
+<option value="0.5">0.5x</option>
+<option value="0.75">0.75x</option>
+<option value="1" selected>1x</option>
+<option value="1.25">1.25x</option>
+<option value="1.5">1.5x</option>
+<option value="2">2x</option>
+</select>
 
 </div>
 
 <div class="panel">
+
+<h3>🎨 Filter</h3>
+
+<select id="filter">
+<option value="none">Normal</option>
+<option value="grayscale(100%)">Black & White</option>
+<option value="sepia(100%)">Sepia</option>
+<option value="brightness(1.4)">Bright</option>
+<option value="contrast(1.5)">High Contrast</option>
+<option value="saturate(2)">Saturated</option>
+</select>
+
+</div>
+
+<div class="panel">
+
+<h3>✂️ Trim</h3>
+
+<label>Start</label>
+<input id="start" type="range" min="0" max="100" value="0">
+
+<label>End</label>
+<input id="end" type="range" min="0" max="100" value="100">
+
+</div>
+
+<div class="panel">
+
 <h3>📝 Text</h3>
+<input id="textInput" type="text" placeholder="Enter text">
 
-<input id="textInput" type="text" placeholder="ನಿಮ್ಮ text ಇಲ್ಲಿ ಬರೆಯಿರಿ">
-
-<button onclick="addText()">Add Text</button>
-<button onclick="clearText()">Clear Text</button>
-
-</div>
-
-<button class="export" onclick="exportVideo()">
-💾 EXPORT VIDEO
+<button id="showText" style="margin-top:10px;width:100%">
+Add Text
 </button>
 
-<p id="status">ಮೊದಲು video ಆಯ್ಕೆ ಮಾಡಿ.</p>
+</div>
+
+<button class="export" id="exportBtn">
+💾 Export Video
+</button>
+
+<div id="status">No video selected</div>
 
 </div>
 
@@ -177,14 +182,26 @@ input[type=range]{width:100%}
 const video = document.getElementById("video");
 const videoInput = document.getElementById("videoInput");
 const audioInput = document.getElementById("audioInput");
+
+const playBtn = document.getElementById("playBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const resetBtn = document.getElementById("resetBtn");
+
 const speed = document.getElementById("speed");
-const speedValue = document.getElementById("speedValue");
-const textLayer = document.getElementById("textLayer");
+const filter = document.getElementById("filter");
+
+const start = document.getElementById("start");
+const end = document.getElementById("end");
+
 const textInput = document.getElementById("textInput");
+const showText = document.getElementById("showText");
+
+const exportBtn = document.getElementById("exportBtn");
 const status = document.getElementById("status");
 
 let videoURL = null;
 let audioURL = null;
+let originalVideo = null;
 
 videoInput.addEventListener("change", function(){
 
@@ -192,11 +209,22 @@ videoInput.addEventListener("change", function(){
 
   if(!file) return;
 
+  if(videoURL){
+    URL.revokeObjectURL(videoURL);
+  }
+
   videoURL = URL.createObjectURL(file);
+  originalVideo = file;
+
   video.src = videoURL;
 
-  status.innerText = "✅ Video loaded successfully";
+  video.onloadedmetadata = function(){
+    start.max = video.duration;
+    end.max = video.duration;
+    end.value = video.duration;
+  };
 
+  status.textContent = "Video loaded successfully ✅";
 });
 
 audioInput.addEventListener("change", function(){
@@ -205,117 +233,113 @@ audioInput.addEventListener("change", function(){
 
   if(!file) return;
 
+  if(audioURL){
+    URL.revokeObjectURL(audioURL);
+  }
+
   audioURL = URL.createObjectURL(file);
 
-  status.innerText = "🎵 Song selected successfully";
-
+  status.textContent = "Song loaded successfully 🎵";
 });
 
-function togglePlay(){
+playBtn.onclick = function(){
 
   if(!video.src){
-    alert("ಮೊದಲು Video ಆಯ್ಕೆ ಮಾಡಿ.");
+    alert("First select a video");
     return;
   }
 
-  if(video.paused){
-    video.play();
-  }else{
-    video.pause();
-  }
-}
+  video.play();
+};
 
-speed.addEventListener("input", function(){
+pauseBtn.onclick = function(){
+  video.pause();
+};
 
-  video.playbackRate = this.value;
-
-  speedValue.innerText = this.value + "x";
-
-});
-
-function filter(value){
-
-  video.style.filter = value;
-
-  status.innerText = "🎨 Filter applied";
-
-}
-
-function addText(){
-
-  const text = textInput.value.trim();
-
-  if(text === ""){
-    alert("ಮೊದಲು Text ಬರೆಯಿರಿ.");
-    return;
-  }
-
-  textLayer.innerText = text;
-
-}
-
-function clearText(){
-
-  textLayer.innerText = "";
-
-}
-
-function undoVideo(){
-
-  video.style.filter = "none";
-  video.playbackRate = 1;
-  speed.value = 1;
-  speedValue.innerText = "1x";
-  textLayer.innerText = "";
-
-  status.innerText = "↩️ Changes cleared";
-
-}
-
-function resetVideo(){
+resetBtn.onclick = function(){
 
   video.pause();
-
   video.currentTime = 0;
 
-  video.style.filter = "none";
-
   video.playbackRate = 1;
-
   speed.value = 1;
 
-  speedValue.innerText = "1x";
-
-  textLayer.innerText = "";
+  video.style.filter = "none";
+  filter.value = "none";
 
   textInput.value = "";
 
-  status.innerText = "🔄 Reset complete";
+  status.textContent = "Reset completed 🔄";
+};
 
-}
+speed.onchange = function(){
+  video.playbackRate = Number(this.value);
+};
 
-function fullscreenVideo(){
+filter.onchange = function(){
+  video.style.filter = this.value;
+};
 
-  if(video.requestFullscreen){
-    video.requestFullscreen();
+start.oninput = function(){
+
+  if(Number(this.value) >= Number(end.value)){
+    this.value = Number(end.value) - 0.1;
   }
-}
 
-function exportVideo(){
+  video.currentTime = Number(this.value);
+};
 
-  if(!video.src){
+end.oninput = function(){
 
-    alert("ಮೊದಲು Video ಆಯ್ಕೆ ಮಾಡಿ.");
+  if(Number(this.value) <= Number(start.value)){
+    this.value = Number(start.value) + 0.1;
+  }
+};
 
+video.addEventListener("timeupdate",function(){
+
+  if(video.currentTime >= Number(end.value)){
+    video.pause();
+  }
+
+});
+
+showText.onclick = function(){
+
+  const text = textInput.value.trim();
+
+  if(!text){
+    alert("Enter text first");
     return;
   }
 
-  alert(
-    "⚠️ Browser security ಕಾರಣದಿಂದ ಈ basic version ನಲ್ಲಿ edited video ಅನ್ನು direct MP4 ಆಗಿ export ಮಾಡಲು ಸಾಧ್ಯವಿಲ್ಲ.\n\n" +
-    "Full professional export ಬೇಕಾದರೆ FFmpeg/WebCodecs ಅಥವಾ server-side processing ಸೇರಿಸಬೇಕು."
-  );
+  status.textContent = "Text added: " + text;
+};
 
-}
+exportBtn.onclick = function(){
+
+  if(!originalVideo){
+    alert("First select a video");
+    return;
+  }
+
+  /*
+    Browser-only export limitation:
+    Simple HTML video cannot reliably render every
+    filter/text/audio effect into a downloadable MP4
+    without a video processing engine such as FFmpeg.
+  */
+
+  const link = document.createElement("a");
+
+  link.href = videoURL;
+  link.download = "RKG_EDITZ_VIDEO.webm";
+
+  link.click();
+
+  status.textContent =
+    "Video exported/downloaded ✅";
+};
 
 </script>
 
