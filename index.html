@@ -1,1106 +1,325 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>RKG EDITZ - All In One Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RKG EDITZ - Video Editor</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
 
 body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#070707;
-color:white
+  background:#080808;
+  color:white;
 }
 
-header{
-text-align:center;
-padding:22px 10px;
-background:#000;
-border-bottom:2px solid #00eaff
+.header{
+  height:60px;
+  background:#111;
+  display:flex;
+  align-items:center;
+  padding:10px 15px;
+  border-bottom:1px solid #292929;
 }
 
-header h1{
-margin:0;
-color:#00eaff;
-text-shadow:0 0 15px #00eaff
+.logo{
+  width:45px;
+  height:45px;
+  object-fit:contain;
+  margin-right:10px;
 }
 
-header p{color:#aaa}
-
-nav{
-display:flex;
-gap:7px;
-padding:10px;
-overflow-x:auto;
-background:#111;
-position:sticky;
-top:0;
-z-index:10
+.header h2{
+  font-size:20px;
 }
 
-nav button{
-min-width:115px;
-padding:12px;
-border:0;
-border-radius:10px;
-background:#222;
-color:white;
-font-weight:bold
+.editor{
+  max-width:1100px;
+  margin:auto;
 }
 
-nav button.active{
-background:#00eaff;
-color:#000
+.preview{
+  height:430px;
+  background:#050505;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:15px;
 }
 
-.page{
-display:none;
-max-width:1000px;
-margin:auto;
-padding:15px
-}
-
-.page.active{display:block}
-
-.card{
-background:#121212;
-padding:18px;
-margin-bottom:15px;
-border-radius:18px;
-border:1px solid #292929
+#video{
+  max-width:100%;
+  max-height:400px;
+  display:none;
 }
 
 .upload{
-border:2px dashed #00eaff;
-padding:25px;
-text-align:center;
-border-radius:15px
+  text-align:center;
 }
 
-input,select{
-width:100%;
-padding:12px;
-margin:6px 0 12px;
-border:0;
-border-radius:9px
+.upload button{
+  background:#ff0050;
+  color:white;
+  border:0;
+  padding:14px 25px;
+  border-radius:8px;
+  font-size:16px;
 }
 
-input[type=range]{padding:0}
-
-button{
-padding:11px 14px;
-margin:4px;
-border:0;
-border-radius:9px;
-background:#00eaff;
-color:#000;
-font-weight:bold;
-cursor:pointer
+.tools{
+  display:flex;
+  overflow-x:auto;
+  background:#111;
+  padding:12px 5px;
+  gap:8px;
 }
 
-button:hover{
-box-shadow:0 0 15px #00eaff
+.tool{
+  min-width:75px;
+  padding:10px 5px;
+  text-align:center;
+  background:#1d1d1d;
+  border-radius:8px;
+  font-size:13px;
 }
 
-.success{background:#00c853;color:white}
-.danger{background:#ff1744;color:white}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:8px
+.tool span{
+  display:block;
+  font-size:22px;
+  margin-bottom:5px;
 }
 
-label{
-display:block;
-margin-top:10px;
-font-weight:bold
+.timeline{
+  height:150px;
+  background:#0d0d0d;
+  border-top:1px solid #222;
+  padding:15px;
 }
 
-canvas{
-max-width:100%;
-background:#222;
-border-radius:12px;
-display:block;
-margin:15px auto
+.track{
+  height:65px;
+  background:#222;
+  border-radius:6px;
+  margin-top:20px;
+  position:relative;
 }
 
-video{
-width:100%;
-max-height:500px;
-background:#000;
-border-radius:12px
+.playhead{
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  width:2px;
+  background:#ff0050;
 }
 
-.status{
-color:#00eaff;
-text-align:center
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  padding:15px;
+  background:#111;
 }
 
-.previewText{
-padding:25px;
-background:#222;
-border-radius:12px;
-text-align:center;
-margin-top:10px
+.controls button{
+  background:#292929;
+  color:white;
+  border:0;
+  padding:10px 18px;
+  border-radius:6px;
 }
 
-.footer{
-text-align:center;
-padding:25px;
-color:#777
+.export{
+  background:#ff0050 !important;
+}
+
+input[type=file]{
+  display:none;
+}
+
+.range{
+  width:100%;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>🎬 RKG EDITZ</h1>
-<p>Photo • Video • Poster • Fonts • Effects • Music</p>
+<div class="editor">
+
+<header class="header">
+
+<img src="rkg_editz_logo.png"
+     class="logo"
+     alt="RKG EDITZ">
+
+<h2>RKG EDITZ</h2>
+
 </header>
 
-<nav>
-<button class="active" onclick="openPage('photo',this)">📸 Photo</button>
-<button onclick="openPage('video',this)">🎬 Video</button>
-<button onclick="openPage('poster',this)">🖼️ Poster</button>
-<button onclick="openPage('font',this)">🔤 Fonts</button>
-<button onclick="openPage('effects',this)">✨ Effects</button>
-</nav>
+<section class="preview">
 
+<div class="upload" id="uploadBox">
 
-<!-- PHOTO -->
-
-<section id="photo" class="page active">
-
-<div class="card">
-
-<h2>📸 Photo Editor</h2>
-
-<div class="upload">
-<input type="file" id="photoInput" accept="image/*">
-</div>
-
-<canvas id="photoCanvas"></canvas>
-
-<label>🌞 Brightness</label>
-<input type="range" id="pBright" min="50" max="200" value="100">
-
-<label>🎨 Contrast</label>
-<input type="range" id="pContrast" min="50" max="200" value="100">
-
-<label>🌈 Saturation</label>
-<input type="range" id="pSaturate" min="0" max="200" value="100">
-
-<label>🌫️ Blur</label>
-<input type="range" id="pBlur" min="0" max="10" value="0">
-
-<div class="grid">
-<button onclick="photoFilter('normal')">Normal</button>
-<button onclick="photoFilter('cinematic')">🎬 Cinematic</button>
-<button onclick="photoFilter('vivid')">🔥 Vivid</button>
-<button onclick="photoFilter('bw')">🖤 B&W</button>
-<button onclick="rotatePhoto()">🔄 Rotate</button>
-<button class="danger" onclick="resetPhoto()">♻️ Reset</button>
-</div>
-
-<button class="success" onclick="downloadPhoto()">
-💾 Download Photo
-</button>
-
-</div>
-</section>
-
-
-<!-- VIDEO -->
-
-<section id="video" class="page">
-
-<div class="card">
-
-<h2>🎬 Video Editor</h2>
-
-<div class="upload">
-<input type="file" id="videoInput" accept="video/*">
-</div>
-
-<video id="videoPlayer" controls playsinline></video>
-
-<label>🌞 Brightness</label>
-<input type="range" id="vBright" min="50" max="200" value="100">
-
-<label>🎨 Contrast</label>
-<input type="range" id="vContrast" min="50" max="200" value="100">
-
-<label>🌈 Saturation</label>
-<input type="range" id="vSaturate" min="0" max="200" value="100">
-
-<label>⚡ Speed</label>
-<input type="range" id="vSpeed" min=".25" max="2" step=".25" value="1">
-
-<div class="grid">
-<button onclick="videoFilter('normal')">Normal</button>
-<button onclick="videoFilter('cinematic')">🎬 Cinematic</button>
-<button onclick="videoFilter('vivid')">🔥 Vivid</button>
-<button onclick="videoFilter('bw')">🖤 B&W</button>
-<button onclick="rotateVideo()">🔄 Rotate</button>
-<button class="danger" onclick="resetVideo()">♻️ Reset</button>
-</div>
-
-</div>
-
-
-<!-- SONG -->
-
-<div class="card">
-
-<h2>🎵 Add Song / Music</h2>
-
-<div class="upload">
-
-<input type="file" id="audioInput" accept="audio/*">
-
-</div>
-
-<p id="musicName" class="status">
-Song select ಮಾಡಿ 🎵
+<p style="margin-bottom:15px;">
+Create amazing videos
 </p>
 
-<audio id="audioPlayer" controls style="width:100%"></audio>
+<label for="videoInput">
+<button>＋ Add Video</button>
+</label>
 
-<label>🔊 Music Volume</label>
-
-<input
-type="range"
-id="musicVolume"
-min="0"
-max="1"
-step="0.01"
-value="1">
-
-<div class="grid">
-
-<button onclick="playMusic()">
-▶️ Play Song
-</button>
-
-<button onclick="pauseMusic()">
-⏸️ Pause
-</button>
-
-<button onclick="stopMusic()">
-⏹️ Stop
-</button>
-
-<button onclick="muteMusic()">
-🔇 Mute
-</button>
+<input type="file"
+       id="videoInput"
+       accept="video/*">
 
 </div>
 
-</div>
-
-
-<!-- MUSIC + VIDEO INFO -->
-
-<div class="card">
-
-<h3>🎬 Video + 🎵 Song</h3>
-
-<p>
-Video ಮತ್ತು Song ಎರಡನ್ನೂ select ಮಾಡಿ.
-ಮೊದಲು video play ಮಾಡಿ, ನಂತರ song play ಮಾಡಿ.
-</p>
-
-<p id="videoStatus" class="status">
-Ready
-</p>
-
-</div>
+<video id="video"
+       controls>
+</video>
 
 </section>
 
+<div class="tools">
 
-<!-- POSTER -->
-
-<section id="poster" class="page">
-
-<div class="card">
-
-<h2>🖼️ Poster Maker</h2>
-
-<input
-type="text"
-id="posterText"
-placeholder="Enter Poster Text">
-
-<select id="posterFont">
-<option>Arial</option>
-<option>Impact</option>
-<option>Georgia</option>
-<option>Verdana</option>
-<option>Courier New</option>
-<option>Trebuchet MS</option>
-</select>
-
-<label>📏 Font Size</label>
-<input type="range" id="posterSize" min="20" max="150" value="60">
-
-<label>🎨 Text Color</label>
-<input type="color" id="posterColor" value="#00eaff">
-
-<label>🌑 Background Color</label>
-<input type="color" id="posterBg" value="#111111">
-
-<div class="grid">
-<button onclick="posterEffect('normal')">Normal</button>
-<button onclick="posterEffect('glow')">✨ Glow</button>
-<button onclick="posterEffect('neon')">💡 Neon</button>
-<button onclick="posterEffect('shadow')">🌑 Shadow</button>
+<div class="tool" onclick="addText()">
+<span>📝</span>
+Text
 </div>
 
-<canvas id="posterCanvas" width="1080" height="1080"></canvas>
-
-<button class="success" onclick="downloadPoster()">
-💾 Download Poster
-</button>
-
-</div>
-</section>
-
-
-<!-- FONTS -->
-
-<section id="font" class="page">
-
-<div class="card">
-
-<h2>🔤 Font Studio</h2>
-
-<input
-type="text"
-id="fontText"
-placeholder="Type your text">
-
-<select id="fontSelect">
-<option>Arial</option>
-<option>Impact</option>
-<option>Georgia</option>
-<option>Verdana</option>
-<option>Courier New</option>
-<option>Trebuchet MS</option>
-</select>
-
-<label>Font Size</label>
-
-<input
-type="range"
-id="fontSize"
-min="15"
-max="100"
-value="40">
-
-<label>Text Color</label>
-
-<input
-type="color"
-id="fontColor"
-value="#ffffff">
-
-<div id="fontPreview" class="previewText">
-RKG EDITZ
+<div class="tool" onclick="showMessage('Effects')">
+<span>✨</span>
+Effects
 </div>
 
-<button onclick="fontStyle('normal')">Normal</button>
-<button onclick="fontStyle('bold')">Bold</button>
-<button onclick="fontStyle('italic')">Italic</button>
-<button onclick="fontStyle('glow')">✨ Glow</button>
+<div class="tool" onclick="showMessage('Filters')">
+<span>🎨</span>
+Filters
+</div>
+
+<div class="tool" onclick="showMessage('Music')">
+<span>🎵</span>
+Music
+</div>
+
+<div class="tool" onclick="showMessage('Speed')">
+<span>⚡</span>
+Speed
+</div>
+
+<div class="tool" onclick="showMessage('Crop')">
+<span>✂️</span>
+Crop
+</div>
+
+<div class="tool" onclick="showMessage('Sticker')">
+<span>😀</span>
+Sticker
+</div>
+
+<div class="tool" onclick="showMessage('Adjust')">
+<span>☀️</span>
+Adjust
+</div>
 
 </div>
-</section>
 
+<div class="timeline">
 
-<!-- EFFECTS -->
+<h3>Timeline</h3>
 
-<section id="effects" class="page">
+<div class="track">
+<div class="playhead"></div>
+</div>
 
-<div class="card">
+</div>
 
-<h2>✨ Effects</h2>
+<div class="controls">
 
-<div class="grid">
+<button onclick="videoPlay()">▶ Play</button>
 
-<button onclick="globalEffect('normal')">
-Normal
+<button onclick="videoPause()">⏸ Pause</button>
+
+<button onclick="video.currentTime=0">
+↩ Reset
 </button>
 
-<button onclick="globalEffect('cinematic')">
-🎬 Cinematic
-</button>
-
-<button onclick="globalEffect('vivid')">
-🔥 Vivid
-</button>
-
-<button onclick="globalEffect('vintage')">
-📽️ Vintage
-</button>
-
-<button onclick="globalEffect('dramatic')">
-⚡ Dramatic
-</button>
-
-<button onclick="globalEffect('bw')">
-🖤 Black & White
+<button class="export"
+        onclick="exportVideo()">
+⬇ Export
 </button>
 
 </div>
 
-<p class="status">
-Photo Editorನಲ್ಲಿ photo upload ಮಾಡಿ effects apply ಮಾಡಿ.
-</p>
-
 </div>
-</section>
-
-
-<div class="footer">
-RKG EDITZ © 2026
-</div>
-
 
 <script>
 
-/* PAGE */
+const videoInput =
+document.getElementById("videoInput");
 
-function openPage(id,btn){
+const video =
+document.getElementById("video");
 
-document.querySelectorAll(".page")
-.forEach(x=>x.classList.remove("active"));
+const uploadBox =
+document.getElementById("uploadBox");
 
-document.getElementById(id)
-.classList.add("active");
-
-document.querySelectorAll("nav button")
-.forEach(x=>x.classList.remove("active"));
-
-btn.classList.add("active");
-
-}
-
-
-/* PHOTO */
-
-const photoCanvas=
-document.getElementById("photoCanvas");
-
-const pctx=
-photoCanvas.getContext("2d");
-
-let photoImage=null;
-let photoRotation=0;
-
-document.getElementById("photoInput")
-.addEventListener("change",function(){
+videoInput.addEventListener("change",function(){
 
 const file=this.files[0];
 
-if(!file)return;
+if(!file) return;
 
-const img=new Image();
+const url=URL.createObjectURL(file);
 
-img.onload=function(){
+video.src=url;
 
-photoImage=img;
+video.style.display="block";
 
-photoCanvas.width=img.width;
-photoCanvas.height=img.height;
-
-drawPhoto();
-
-};
-
-img.src=URL.createObjectURL(file);
+uploadBox.style.display="none";
 
 });
 
-
-const pBright=
-document.getElementById("pBright");
-
-const pContrast=
-document.getElementById("pContrast");
-
-const pSaturate=
-document.getElementById("pSaturate");
-
-const pBlur=
-document.getElementById("pBlur");
-
-
-function drawPhoto(){
-
-if(!photoImage)return;
-
-pctx.save();
-
-pctx.clearRect(
-0,0,
-photoCanvas.width,
-photoCanvas.height
-);
-
-pctx.filter=
-`brightness(${pBright.value}%)
-contrast(${pContrast.value}%)
-saturate(${pSaturate.value}%)
-blur(${pBlur.value}px)`;
-
-pctx.translate(
-photoCanvas.width/2,
-photoCanvas.height/2
-);
-
-pctx.rotate(
-photoRotation*Math.PI/180
-);
-
-pctx.drawImage(
-photoImage,
--photoImage.width/2,
--photoImage.height/2
-);
-
-pctx.restore();
-
+function videoPlay(){
+  video.play();
 }
 
-
-[pBright,pContrast,pSaturate,pBlur]
-.forEach(x=>
-x.addEventListener("input",drawPhoto));
-
-
-function photoFilter(type){
-
-if(type==="normal"){
-pBright.value=100;
-pContrast.value=100;
-pSaturate.value=100;
+function videoPause(){
+  video.pause();
 }
 
-if(type==="cinematic"){
-pBright.value=90;
-pContrast.value=145;
-pSaturate.value=115;
-}
+function addText(){
 
-if(type==="vivid"){
-pBright.value=110;
-pContrast.value=135;
-pSaturate.value=180;
-}
+let text=prompt("Enter text:");
 
-if(type==="bw"){
-pBright.value=100;
-pContrast.value=125;
-pSaturate.value=0;
-}
+if(text){
 
-drawPhoto();
-
-}
-
-
-function rotatePhoto(){
-
-photoRotation+=90;
-drawPhoto();
-
-}
-
-
-function resetPhoto(){
-
-photoRotation=0;
-
-pBright.value=100;
-pContrast.value=100;
-pSaturate.value=100;
-pBlur.value=0;
-
-drawPhoto();
-
-}
-
-
-function downloadPhoto(){
-
-if(!photoImage){
-alert("Photo upload ಮಾಡಿ.");
-return;
-}
-
-const a=document.createElement("a");
-
-a.download="RKG-EDITZ-photo.png";
-
-a.href=photoCanvas.toDataURL("image/png");
-
-a.click();
-
-}
-
-
-/* VIDEO */
-
-const video=
-document.getElementById("videoPlayer");
-
-const vBright=
-document.getElementById("vBright");
-
-const vContrast=
-document.getElementById("vContrast");
-
-const vSaturate=
-document.getElementById("vSaturate");
-
-const vSpeed=
-document.getElementById("vSpeed");
-
-document.getElementById("videoInput")
-.addEventListener("change",function(){
-
-const file=this.files[0];
-
-if(!file)return;
-
-video.src=
-URL.createObjectURL(file);
-
-document.getElementById("videoStatus")
-.innerText="✅ Video Loaded";
-
-});
-
-
-function applyVideo(){
-
-video.style.filter=
-`brightness(${vBright.value}%)
-contrast(${vContrast.value}%)
-saturate(${vSaturate.value}%)`;
-
-video.playbackRate=
-vSpeed.value;
-
-}
-
-
-[vBright,vContrast,vSaturate,vSpeed]
-.forEach(x=>
-x.addEventListener("input",applyVideo));
-
-
-let videoRotation=0;
-
-function rotateVideo(){
-
-videoRotation+=90;
-
-video.style.transform=
-`rotate(${videoRotation}deg)`;
-
-}
-
-
-function videoFilter(type){
-
-if(type==="normal"){
-vBright.value=100;
-vContrast.value=100;
-vSaturate.value=100;
-}
-
-if(type==="cinematic"){
-vBright.value=90;
-vContrast.value=145;
-vSaturate.value=115;
-}
-
-if(type==="vivid"){
-vBright.value=110;
-vContrast.value=135;
-vSaturate.value=180;
-}
-
-if(type==="bw"){
-vBright.value=100;
-vContrast.value=125;
-vSaturate.value=0;
-}
-
-applyVideo();
-
-}
-
-
-function resetVideo(){
-
-vBright.value=100;
-vContrast.value=100;
-vSaturate.value=100;
-vSpeed.value=1;
-
-videoRotation=0;
-
-video.style.transform=
-"rotate(0deg)";
-
-applyVideo();
-
-}
-
-
-/* SONG */
-
-const audioInput=
-document.getElementById("audioInput");
-
-const audioPlayer=
-document.getElementById("audioPlayer");
-
-const musicVolume=
-document.getElementById("musicVolume");
-
-const musicName=
-document.getElementById("musicName");
-
-
-audioInput.addEventListener("change",function(){
-
-const file=this.files[0];
-
-if(!file)return;
-
-audioPlayer.src=
-URL.createObjectURL(file);
-
-musicName.innerText=
-"🎵 "+file.name;
-
-});
-
-
-function playMusic(){
-
-if(!audioPlayer.src){
-
-alert("ಮೊದಲು Song select ಮಾಡಿ.");
-
-return;
-
-}
-
-audioPlayer.play();
-
-}
-
-
-function pauseMusic(){
-
-audioPlayer.pause();
-
-}
-
-
-function stopMusic(){
-
-audioPlayer.pause();
-
-audioPlayer.currentTime=0;
-
-}
-
-
-function muteMusic(){
-
-audioPlayer.muted=
-!audioPlayer.muted;
-
-}
-
-
-musicVolume.addEventListener(
-"input",
-function(){
-
-audioPlayer.volume=
-this.value;
-
-});
-
-
-/* POSTER */
-
-const posterCanvas=
-document.getElementById("posterCanvas");
-
-const pctx2=
-posterCanvas.getContext("2d");
-
-let posterMode="normal";
-
-
-function drawPoster(){
-
-const text=
-document.getElementById("posterText").value
-||"RKG EDITZ";
-
-const font=
-document.getElementById("posterFont").value;
-
-const size=
-document.getElementById("posterSize").value;
-
-const color=
-document.getElementById("posterColor").value;
-
-const bg=
-document.getElementById("posterBg").value;
-
-pctx2.clearRect(
-0,0,1080,1080
-);
-
-pctx2.fillStyle=bg;
-
-pctx2.fillRect(
-0,0,1080,1080
-);
-
-pctx2.textAlign="center";
-pctx2.textBaseline="middle";
-
-pctx2.font=
-`bold ${size}px ${font}`;
-
-pctx2.fillStyle=color;
-
-if(posterMode==="glow" ||
-posterMode==="neon"){
-
-pctx2.shadowBlur=40;
-pctx2.shadowColor=color;
-
-}
-
-if(posterMode==="shadow"){
-
-pctx2.shadowBlur=10;
-pctx2.shadowOffsetX=8;
-pctx2.shadowOffsetY=8;
-pctx2.shadowColor="#000";
-
-}
-
-pctx2.fillText(
-text,
-540,
-540
-);
-
-pctx2.shadowBlur=0;
-
-}
-
-
-[
-"posterText",
-"posterFont",
-"posterSize",
-"posterColor",
-"posterBg"
-].forEach(id=>{
-
-document.getElementById(id)
-.addEventListener("input",drawPoster);
-
-});
-
-
-function posterEffect(type){
-
-posterMode=type;
-
-drawPoster();
-
-}
-
-
-function downloadPoster(){
-
-const a=document.createElement("a");
-
-a.download=
-"RKG-EDITZ-poster.png";
-
-a.href=
-posterCanvas.toDataURL("image/png");
-
-a.click();
-
-}
-
-drawPoster();
-
-
-/* FONT */
-
-const fontText=
-document.getElementById("fontText");
-
-const fontSelect=
-document.getElementById("fontSelect");
-
-const fontSize=
-document.getElementById("fontSize");
-
-const fontColor=
-document.getElementById("fontColor");
-
-const fontPreview=
-document.getElementById("fontPreview");
-
-
-function updateFont(){
-
-fontPreview.innerText=
-fontText.value||"RKG EDITZ";
-
-fontPreview.style.fontFamily=
-fontSelect.value;
-
-fontPreview.style.fontSize=
-fontSize.value+"px";
-
-fontPreview.style.color=
-fontColor.value;
-
-}
-
-
-[fontText,fontSelect,fontSize,fontColor]
-.forEach(x=>
-x.addEventListener("input",updateFont));
-
-
-function fontStyle(type){
-
-fontPreview.style.fontWeight=
-type==="bold"?"bold":"normal";
-
-fontPreview.style.fontStyle=
-type==="italic"?"italic":"normal";
-
-if(type==="glow"){
-
-fontPreview.style.textShadow=
-`0 0 10px ${fontColor.value},
-0 0 25px ${fontColor.value},
-0 0 45px ${fontColor.value}`;
-
-}else{
-
-fontPreview.style.textShadow="none";
+alert("Text added: "+text);
 
 }
 
 }
 
+function showMessage(name){
 
-updateFont();
-
-
-/* EFFECTS */
-
-function globalEffect(type){
-
-if(!photoImage){
-
-alert(
-"Photo Editorಗೆ ಹೋಗಿ ಮೊದಲು Photo upload ಮಾಡಿ."
-);
-
-return;
+alert(name+" tool ready. Next upgrade will add full functionality.");
 
 }
 
-if(type==="normal"){
+function exportVideo(){
 
-pBright.value=100;
-pContrast.value=100;
-pSaturate.value=100;
-
-}
-
-if(type==="cinematic"){
-
-pBright.value=90;
-pContrast.value=150;
-pSaturate.value=110;
-
-}
-
-if(type==="vivid"){
-
-pBright.value=110;
-pContrast.value=140;
-pSaturate.value=180;
-
-}
-
-if(type==="vintage"){
-
-pBright.value=100;
-pContrast.value=110;
-pSaturate.value=65;
-
-}
-
-if(type==="dramatic"){
-
-pBright.value=90;
-pContrast.value=180;
-pSaturate.value=130;
-
-}
-
-if(type==="bw"){
-
-pBright.value=100;
-pContrast.value=125;
-pSaturate.value=0;
-
-}
-
-drawPhoto();
+alert("Export system will be added in the next upgrade.");
 
 }
 
 </script>
 
 </body>
-</html
- <img src="logo.png" alt="RKG EDITZ">
-
-<img src="rkg_editz_logo.png" alt="RKG EDITZ Logo" class="logo">.logo {
-  width: 5.5px;
-  height: 5.5px;
-  object-fit: contain;
-}
+</html>
