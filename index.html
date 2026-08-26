@@ -2,346 +2,504 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RKG EDITZ</title>
 
 <style>
-*{box-sizing:border-box}
-body{
+*{
+  box-sizing:border-box;
   margin:0;
+  padding:0;
   font-family:Arial,sans-serif;
+}
+
+body{
+  background:#050505;
+  color:white;
+}
+
+.app{
+  max-width:1100px;
+  min-height:100vh;
+  margin:auto;
+  background:#090909;
+  overflow:hidden;
+}
+
+/* HEADER */
+.header{
+  height:75px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 16px;
+  border-bottom:1px solid #252525;
+}
+
+.logo{
+  font-size:34px;
+  font-weight:900;
+  font-style:italic;
+}
+
+.logo span{
+  color:#ffc400;
+}
+
+.editz{
+  text-align:center;
+  color:#ffc400;
+  font-size:9px;
+  letter-spacing:5px;
+}
+
+.header button{
   background:#111;
   color:white;
+  border:1px solid #444;
+  border-radius:10px;
+  padding:10px 13px;
 }
-header{
-  padding:18px;
-  text-align:center;
-  background:#181818;
-  font-size:25px;
+
+.export{
+  background:#ffc400!important;
+  color:#111!important;
   font-weight:bold;
 }
-.container{
-  max-width:900px;
-  margin:auto;
-  padding:15px;
-}
-.preview{
-  background:#000;
-  border-radius:12px;
-  overflow:hidden;
-  margin-bottom:15px;
-}
-video{
-  width:100%;
-  display:block;
-  max-height:500px;
-}
-.controls{
+
+/* EDITOR */
+.editor{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
+  grid-template-columns:90px 1fr 90px;
+  gap:8px;
+  padding:8px;
 }
-button,label{
-  background:#292929;
+
+.side{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.tool{
+  min-height:65px;
+  background:#0b0b0b;
+  border:1px solid #292929;
+  border-radius:12px;
   color:white;
-  border:0;
-  padding:13px;
-  border-radius:8px;
+}
+
+.tool:hover{
+  border-color:#ffc400;
+  color:#ffc400;
+}
+
+.tool b{
+  display:block;
+  font-size:23px;
+  margin-bottom:5px;
+}
+
+/* PREVIEW */
+.preview{
+  height:500px;
+  background:#000;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+
+#canvas{
+  max-width:100%;
+  max-height:100%;
+  background:#111;
+}
+
+.empty{
+  position:absolute;
   text-align:center;
-  cursor:pointer;
-  font-size:15px;
+  color:#777;
 }
-button:hover,label:hover{
-  background:#444;
+
+.empty strong{
+  color:white;
+  font-size:20px;
 }
-input[type=file]{
+
+/* TEXT */
+.previewText{
+  position:absolute;
+  top:15%;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:35px;
+  font-weight:bold;
+  text-shadow:0 3px 10px black;
   display:none;
 }
-.panel{
-  margin-top:15px;
-  padding:15px;
-  background:#1b1b1b;
-  border-radius:10px;
-}
-input[type=range]{
-  width:100%;
-}
-select,input[type=text]{
-  width:100%;
+
+/* TIMELINE */
+.timelineArea{
   padding:10px;
-  border-radius:7px;
-  border:0;
-  margin-top:8px;
 }
-.export{
+
+.time{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  color:#ddd;
+}
+
+.controls{
+  text-align:center;
+  margin:7px;
+}
+
+.controls button{
+  background:none;
+  color:white;
+  border:0;
+  font-size:25px;
+  margin:0 18px;
+}
+
+.controls .play{
+  font-size:38px;
+}
+
+.track{
+  height:55px;
+  background:#664c12;
+  border-radius:8px;
+  padding:18px;
+}
+
+.musicTrack{
+  height:38px;
+  margin-top:6px;
+  padding:11px;
+  border-radius:7px;
+  background:#36165e;
+}
+
+.textTrack{
+  height:38px;
+  margin-top:6px;
+  padding:11px;
+  border-radius:7px;
+  background:#715314;
+}
+
+.effectTrack{
+  height:38px;
+  margin-top:6px;
+  padding:11px;
+  border-radius:7px;
+  background:#07543e;
+}
+
+#seek{
   width:100%;
-  margin-top:15px;
-  background:#e91e63;
+  accent-color:#ffc400;
+}
+
+/* MAIN TOOLS */
+.mainTools{
+  display:flex;
+  overflow-x:auto;
+  border-top:1px solid #292929;
+  background:#101216;
+}
+
+.mainTools button{
+  min-width:105px;
+  padding:13px 5px;
+  color:white;
+  background:none;
+  border:0;
+}
+
+.mainTools button.active{
+  color:#ffc400;
+}
+
+.mainTools b{
+  display:block;
+  font-size:23px;
+  margin-bottom:5px;
+}
+
+/* BOTTOM */
+.bottom{
+  display:flex;
+  justify-content:space-around;
+  border-top:1px solid #292929;
+  background:#101216;
+}
+
+.bottom button{
+  min-width:100px;
+  padding:12px 5px;
+  color:white;
+  background:none;
+  border:0;
+}
+
+.bottom b{
+  display:block;
+  font-size:23px;
+}
+
+.new{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  background:#ffc400!important;
+  color:#111!important;
+  font-size:30px!important;
+}
+
+/* PANEL */
+.panel{
+  position:fixed;
+  left:50%;
+  bottom:15px;
+  transform:translateX(-50%);
+  width:min(600px,94%);
+  background:#18191d;
+  border:1px solid #555;
+  border-radius:16px;
+  padding:18px;
+  z-index:20;
+  box-shadow:0 10px 50px #000;
+}
+
+.panel h3{
+  margin-bottom:12px;
+}
+
+.panel button,
+.panel input{
+  padding:10px;
+  margin:4px;
+  border-radius:8px;
+  border:1px solid #555;
+  background:#090909;
+  color:white;
+}
+
+.panel button{
+  background:#ffc400;
+  color:#111;
+  font-weight:bold;
+}
+
+.hidden{
+  display:none;
+}
+
+@media(max-width:650px){
+
+.editor{
+  grid-template-columns:60px 1fr 60px;
+}
+
+.tool{
+  min-height:55px;
+}
+
+.tool b{
   font-size:18px;
 }
-#status{
-  text-align:center;
-  margin-top:12px;
-  color:#00e676;
+
+.tool small{
+  font-size:9px;
+}
+
+.preview{
+  height:390px;
+}
+
+.mainTools button{
+  min-width:75px;
+}
+
+.mainTools b{
+  font-size:20px;
+}
+
+.bottom button{
+  min-width:65px;
+  font-size:9px;
+}
+
 }
 </style>
 </head>
 
 <body>
 
-<header>🎬 RKG EDITZ</header>
+<div class="app">
 
-<div class="container">
+<!-- HEADER -->
+<div class="header">
+
+<button onclick="history.back()">‹</button>
+
+<div>
+<div class="logo">RKG<span>•</span>G</div>
+<div class="editz">EDITZ</div>
+</div>
+
+<div>
+<button onclick="changeRatio()">▣ 9:16</button>
+<button onclick="showHelp()">?</button>
+<button class="export" onclick="exportProject()">EXPORT<br>HD</button>
+</div>
+
+</div>
+
+
+<!-- EDITOR -->
+<div class="editor">
+
+<!-- LEFT -->
+<div class="side">
+
+<button class="tool" onclick="undo()">
+<b>↶</b>
+<small>Undo</small>
+</button>
+
+<button class="tool" onclick="redo()">
+<b>↷</b>
+<small>Redo</small>
+</button>
+
+<button class="tool" onclick="saveProject()">
+<b>▣</b>
+<small>Save</small>
+</button>
+
+<button class="tool" onclick="copyClip()">
+<b>▱</b>
+<small>Copy</small>
+</button>
+
+<button class="tool" onclick="deleteMedia()">
+<b>♜</b>
+<small>Delete</small>
+</button>
+
+</div>
+
+
+<!-- CENTER -->
+<div>
 
 <div class="preview">
-<video id="video" controls></video>
+
+<canvas id="canvas" width="720" height="1280"></canvas>
+
+<div class="empty" id="empty">
+<strong>RKG EDITZ</strong><br>
+Tap + New Project to add video or photo
+</div>
+
+<div class="previewText" id="previewText">
+RKG EDITZ
+</div>
+
+</div>
+
+
+<div class="timelineArea">
+
+<div class="time">
+<span id="timeText">00:00 / 00:30</span>
+<span>⛶</span>
 </div>
 
 <div class="controls">
 
-<label>
-📁 Add Video
-<input id="videoInput" type="file" accept="video/*">
-</label>
+<button onclick="previous()">|◀</button>
 
-<label>
-🎵 Add Song
-<input id="audioInput" type="file" accept="audio/*">
-</label>
+<button class="play" id="playBtn" onclick="playPause()">▶</button>
 
-<button id="playBtn">▶️ Play</button>
-<button id="pauseBtn">⏸ Pause</button>
-
-<button id="resetBtn">↩️ Reset</button>
+<button onclick="next()">▶|</button>
 
 </div>
 
-<div class="panel">
+<div class="track" id="clipName">
+No media — tap +
+</div>
 
-<h3>⚡ Speed</h3>
+<input id="seek" type="range" min="0" max="30" value="0">
 
-<select id="speed">
-<option value="0.5">0.5x</option>
-<option value="0.75">0.75x</option>
-<option value="1" selected>1x</option>
-<option value="1.25">1.25x</option>
-<option value="1.5">1.5x</option>
-<option value="2">2x</option>
-</select>
+<div class="musicTrack">
+♫ <span id="musicName">No music</span>
+</div>
+
+<div class="textTrack">
+T <span id="textTrack">RKG EDITZ</span>
+</div>
+
+<div class="effectTrack">
+★ Glow Effect
+</div>
 
 </div>
 
-<div class="panel">
-
-<h3>🎨 Filter</h3>
-
-<select id="filter">
-<option value="none">Normal</option>
-<option value="grayscale(100%)">Black & White</option>
-<option value="sepia(100%)">Sepia</option>
-<option value="brightness(1.4)">Bright</option>
-<option value="contrast(1.5)">High Contrast</option>
-<option value="saturate(2)">Saturated</option>
-</select>
-
 </div>
 
-<div class="panel">
 
-<h3>✂️ Trim</h3>
+<!-- RIGHT -->
+<div class="side">
 
-<label>Start</label>
-<input id="start" type="range" min="0" max="100" value="0">
+<button class="tool" onclick="fitMedia()">
+<b>⛶</b>
+<small>Fit</small>
+</button>
 
-<label>End</label>
-<input id="end" type="range" min="0" max="100" value="100">
+<button class="tool" onclick="rotate()">
+<b>⟳</b>
+<small>Rotate</small>
+</button>
 
-</div>
+<button class="tool" onclick="flip()">
+<b>⇅</b>
+<small>Flip</small>
+</button>
 
-<div class="panel">
+<button class="tool" onclick="mirror()">
+<b>▥</b>
+<small>Mirror</small>
+</button>
 
-<h3>📝 Text</h3>
-<input id="textInput" type="text" placeholder="Enter text">
-
-<button id="showText" style="margin-top:10px;width:100%">
-Add Text
+<button class="tool" onclick="freeze()">
+<b>❄</b>
+<small>Freeze</small>
 </button>
 
 </div>
 
-<button class="export" id="exportBtn">
-💾 Export Video
-</button>
-
-<div id="status">No video selected</div>
-
 </div>
 
-<script>
 
-const video = document.getElementById("video");
-const videoInput = document.getElementById("videoInput");
-const audioInput = document.getElementById("audioInput");
+<!-- MAIN TOOLS -->
+<div class="mainTools">
 
-const playBtn = document.getElementById("playBtn");
-const pauseBtn = document.getElementById("pauseBtn");
-const resetBtn = document.getElementById("resetBtn");
+<button onclick="openEdit(this)">
+<b>☷</b>
+EDIT
+</button>
 
-const speed = document.getElementById("speed");
-const filter = document.getElementById("filter");
+<button onclick="openMusic(this)">
+<b>♫</b>
+MUSIC
+</button>
 
-const start = document.getElementById("start");
-const end = document.getElementById("end");
-
-const textInput = document.getElementById("textInput");
-const showText = document.getElementById("showText");
-
-const exportBtn = document.getElementById("exportBtn");
-const status = document.getElementById("status");
-
-let videoURL = null;
-let audioURL = null;
-let originalVideo = null;
-
-videoInput.addEventListener("change", function(){
-
-  const file = this.files[0];
-
-  if(!file) return;
-
-  if(videoURL){
-    URL.revokeObjectURL(videoURL);
-  }
-
-  videoURL = URL.createObjectURL(file);
-  originalVideo = file;
-
-  video.src = videoURL;
-
-  video.onloadedmetadata = function(){
-    start.max = video.duration;
-    end.max = video.duration;
-    end.value = video.duration;
-  };
-
-  status.textContent = "Video loaded successfully ✅";
-});
-
-audioInput.addEventListener("change", function(){
-
-  const file = this.files[0];
-
-  if(!file) return;
-
-  if(audioURL){
-    URL.revokeObjectURL(audioURL);
-  }
-
-  audioURL = URL.createObjectURL(file);
-
-  status.textContent = "Song loaded successfully 🎵";
-});
-
-playBtn.onclick = function(){
-
-  if(!video.src){
-    alert("First select a video");
-    return;
-  }
-
-  video.play();
-};
-
-pauseBtn.onclick = function(){
-  video.pause();
-};
-
-resetBtn.onclick = function(){
-
-  video.pause();
-  video.currentTime = 0;
-
-  video.playbackRate = 1;
-  speed.value = 1;
-
-  video.style.filter = "none";
-  filter.value = "none";
-
-  textInput.value = "";
-
-  status.textContent = "Reset completed 🔄";
-};
-
-speed.onchange = function(){
-  video.playbackRate = Number(this.value);
-};
-
-filter.onchange = function(){
-  video.style.filter = this.value;
-};
-
-start.oninput = function(){
-
-  if(Number(this.value) >= Number(end.value)){
-    this.value = Number(end.value) - 0.1;
-  }
-
-  video.currentTime = Number(this.value);
-};
-
-end.oninput = function(){
-
-  if(Number(this.value) <= Number(start.value)){
-    this.value = Number(start.value) + 0.1;
-  }
-};
-
-video.addEventListener("timeupdate",function(){
-
-  if(video.currentTime >= Number(end.value)){
-    video.pause();
-  }
-
-});
-
-showText.onclick = function(){
-
-  const text = textInput.value.trim();
-
-  if(!text){
-    alert("Enter text first");
-    return;
-  }
-
-  status.textContent = "Text added: " + text;
-};
-
-exportBtn.onclick = function(){
-
-  if(!originalVideo){
-    alert("First select a video");
-    return;
-  }
-
-  /*
-    Browser-only export limitation:
-    Simple HTML video cannot reliably render every
-    filter/text/audio effect into a downloadable MP4
-    without a video processing engine such as FFmpeg.
-  */
-
-  const link = document.createElement("a");
-
-  link.href = videoURL;
-  link.download = "RKG_EDITZ_VIDEO.webm";
-
-  link.click();
-
-  status.textContent =
-    "Video exported/downloaded ✅";
-};
-
-</script>
-
-</body>
-</html>
+<button onclick="openText(this
