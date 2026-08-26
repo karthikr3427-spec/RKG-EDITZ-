@@ -3,134 +3,233 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>RKG EDITZ</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@400;600;700&family=Roboto:wght@400;500;700;900&family=Poppins:wght@400;500;600;700;800&family=Oswald:wght@400;500;700&family=Lobster&family=Pacifico&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<title>RKG EDITZ - Video Editor</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@400;500;700;900&family=Oswald:wght@400;500;700&family=Lobster&family=Pacifico&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    background:#070707;
+    color:#fff;
+    font-family:Poppins,Arial,sans-serif;
+}
+
 body{
- margin:0;
- background:#080808;
- color:white;
- font-family:Poppins,Arial,sans-serif;
+    min-height:100vh;
 }
+
 header{
- padding:16px;
- text-align:center;
- background:linear-gradient(135deg,#ff0066,#7200ff);
+    padding:18px 12px;
+    text-align:center;
+    background:linear-gradient(135deg,#ff0066,#7200ff);
+    box-shadow:0 5px 25px #000;
 }
+
 .logo{
- font-size:28px;
- font-weight:900;
- letter-spacing:2px;
- text-shadow:0 0 15px #fff;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:2px;
+    text-shadow:0 0 15px #fff;
 }
+
+.subtitle{
+    font-size:11px;
+    opacity:.9;
+    margin-top:3px;
+}
+
 .container{
- max-width:1100px;
- margin:auto;
- padding:15px;
+    width:100%;
+    max-width:1100px;
+    margin:auto;
+    padding:14px;
 }
+
 .card{
- background:#151515;
- border:1px solid #292929;
- border-radius:18px;
- padding:15px;
- margin-bottom:15px;
- box-shadow:0 8px 30px #0008;
+    background:#151515;
+    border:1px solid #292929;
+    border-radius:18px;
+    padding:15px;
+    margin-bottom:15px;
+    box-shadow:0 8px 30px #0008;
 }
+
 h2{
- margin:4px 0 14px;
- font-size:18px;
+    margin:2px 0 14px;
+    font-size:18px;
 }
-button,input,select{
- font:inherit;
-}
-button{
- border:0;
- border-radius:10px;
- padding:11px 14px;
- margin:4px;
- background:#252525;
- color:white;
- cursor:pointer;
-}
-button:hover{background:#ff0066}
-.primary{
- background:linear-gradient(135deg,#ff0066,#7200ff);
-}
-input[type=file]{
- width:100%;
- padding:10px;
- background:#222;
- border-radius:10px;
-}
-input[type=text]{
- width:100%;
- padding:12px;
- border-radius:10px;
- border:1px solid #444;
- background:#0d0d0d;
- color:white;
- margin-bottom:8px;
-}
-input[type=range]{width:100%}
+
+input[type=file],
+input[type=text],
 select{
- width:100%;
- padding:11px;
- background:#222;
- color:white;
- border:1px solid #444;
- border-radius:10px;
- margin-bottom:8px;
+    width:100%;
+    padding:12px;
+    margin:5px 0;
+    border:1px solid #444;
+    border-radius:10px;
+    background:#0d0d0d;
+    color:#fff;
+    outline:none;
 }
-.preview{
- min-height:280px;
- display:flex;
- align-items:center;
- justify-content:center;
- background:
- radial-gradient(circle at center,#242424,#090909);
- border-radius:15px;
- overflow:hidden;
- position:relative;
+
+input[type=range]{
+    width:100%;
+    accent-color:#ff0066;
 }
-canvas{
- max-width:100%;
- max-height:600px;
- border-radius:10px;
- background:#111;
+
+button{
+    border:0;
+    border-radius:10px;
+    padding:11px 14px;
+    margin:4px;
+    background:#292929;
+    color:#fff;
+    cursor:pointer;
+    font-weight:600;
+    transition:.15s;
 }
+
+button:hover{
+    background:#ff0066;
+}
+
+button:active{
+    transform:scale(.96);
+}
+
+.primary{
+    background:linear-gradient(135deg,#ff0066,#7200ff);
+}
+
+.danger{
+    background:#9d183d;
+}
+
 .grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
- gap:7px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:7px;
 }
-.small{
- font-size:12px;
- color:#aaa;
+
+.preview{
+    width:100%;
+    min-height:250px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#030303;
+    border-radius:14px;
+    overflow:hidden;
 }
-.rangeBox{
- margin:10px 0;
+
+#canvas{
+    display:block;
+    width:100%;
+    height:auto;
+    max-height:600px;
+    background:#111;
 }
-.badge{
- display:inline-block;
- padding:5px 9px;
- border-radius:20px;
- background:#222;
- margin:3px;
- font-size:12px;
+
+#sourceVideo{
+    display:none;
 }
-.status{
- padding:10px;
- border-radius:10px;
- background:#101010;
- color:#7cffaa;
- margin-top:8px;
-}
+
 audio{
- width:100%;
- margin-top:10px;
+    width:100%;
+    margin-top:8px;
+}
+
+.status{
+    margin-top:10px;
+    padding:10px;
+    border-radius:10px;
+    background:#0c0c0c;
+    color:#79ffae;
+    font-size:13px;
+    word-break:break-word;
+}
+
+.progress{
+    width:100%;
+    height:13px;
+    margin-top:10px;
+    background:#292929;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+#progressBar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ff0066,#7200ff);
+    transition:width .15s;
+}
+
+.small{
+    color:#999;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.label{
+    display:block;
+    margin-top:10px;
+    margin-bottom:4px;
+    font-size:13px;
+}
+
+.downloadBox{
+    display:none;
+    margin-top:12px;
+    padding:12px;
+    border-radius:12px;
+    background:#101010;
+}
+
+#downloadLink{
+    display:inline-block;
+    text-decoration:none;
+    color:#fff;
+    background:linear-gradient(135deg,#00a86b,#0066ff);
+    padding:12px 18px;
+    border-radius:10px;
+    font-weight:700;
+}
+
+hr{
+    border:0;
+    border-top:1px solid #292929;
+    margin:15px 0;
+}
+
+@media(max-width:600px){
+    .container{
+        padding:10px;
+    }
+
+    .card{
+        padding:12px;
+        border-radius:15px;
+    }
+
+    .logo{
+        font-size:26px;
+    }
+
+    button{
+        padding:10px 11px;
+        font-size:13px;
+    }
 }
 </style>
 </head>
@@ -138,622 +237,200 @@ audio{
 <body>
 
 <header>
- <div class="logo">RKG EDITZ</div>
- <div class="small">VIDEO • PHOTO • MUSIC • TEXT EDITOR</div>
+    <div class="logo">RKG EDITZ</div>
+    <div class="subtitle">VIDEO • MUSIC • EFFECTS • MP4</div>
 </header>
 
 <div class="container">
 
-<!-- MEDIA -->
-<div class="card">
-<h2>📁 Media Upload</h2>
+    <!-- VIDEO -->
+    <div class="card">
+        <h2>🎬 Video Upload</h2>
 
-<input id="imageInput" type="file" accept="image/*">
+        <input
+            id="videoInput"
+            type="file"
+            accept="video/*"
+        >
 
-<br><br>
+        <div id="videoStatus" class="status">
+            First video upload madi.
+        </div>
+    </div>
 
-<input id="videoInput" type="file" accept="video/*">
+    <!-- MUSIC -->
+    <div class="card">
+        <h2>🎵 Music</h2>
 
-<br><br>
+        <input
+            id="musicInput"
+            type="file"
+            accept="audio/*"
+        >
 
-<input id="musicInput" type="file" accept="audio/*">
+        <audio id="music" controls></audio>
 
-<audio id="audio" controls></audio>
+        <label class="label">Music Volume</label>
 
-<div class="status" id="status">Ready — Media upload madi.</div>
+        <input
+            id="musicVolume"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.8"
+        >
+
+        <div class="small">
+            Export madidaga selected music MP4-ge add agutte.
+        </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="card">
+        <h2>👀 Preview</h2>
+
+        <div class="preview">
+            <canvas id="canvas" width="1280" height="720"></canvas>
+        </div>
+
+        <div class="small" style="margin-top:8px;">
+            Preview automatically update agutte.
+        </div>
+    </div>
+
+    <!-- EFFECTS -->
+    <div class="card">
+        <h2>🎨 10 Effects</h2>
+
+        <div class="grid">
+            <button onclick="setEffect('normal')">Normal</button>
+            <button onclick="setEffect('grayscale')">Grayscale</button>
+            <button onclick="setEffect('sepia')">Sepia</button>
+            <button onclick="setEffect('invert')">Invert</button>
+            <button onclick="setEffect('blur')">Blur</button>
+            <button onclick="setEffect('brightness')">Brightness</button>
+            <button onclick="setEffect('contrast')">Contrast</button>
+            <button onclick="setEffect('saturate')">Saturation</button>
+            <button onclick="setEffect('vintage')">Vintage</button>
+            <button onclick="setEffect('glow')">Glow</button>
+        </div>
+
+        <label class="label">Effect Amount</label>
+
+        <input
+            id="effectAmount"
+            type="range"
+            min="0"
+            max="200"
+            value="100"
+        >
+    </div>
+
+    <!-- FONT -->
+    <div class="card">
+        <h2>🔤 Fonts</h2>
+
+        <select id="fontSelect">
+
+            <option value="Poppins">Poppins</option>
+            <option value="Roboto">Roboto</option>
+            <option value="Oswald">Oswald</option>
+            <option value="Lobster">Lobster</option>
+            <option value="Pacifico">Pacifico</option>
+            <option value="Playfair Display">Playfair Display</option>
+
+            <option value="Noto Sans Kannada">
+                Noto Sans Kannada
+            </option>
+
+            <option value="Noto Serif Kannada">
+                Noto Serif Kannada
+            </option>
+
+            <option value="Baloo Tamma 2">
+                Baloo Tamma 2
+            </option>
+
+        </select>
+    </div>
+
+    <!-- TEXT -->
+    <div class="card">
+        <h2>✍️ Text + Kannada</h2>
+
+        <input
+            id="textInput"
+            type="text"
+            placeholder="ನಿಮ್ಮ Text ಇಲ್ಲಿ ಬರೆಯಿರಿ"
+        >
+
+        <label class="label">Text Size</label>
+
+        <input
+            id="textSize"
+            type="range"
+            min="20"
+            max="150"
+            value="60"
+        >
+
+        <div class="grid">
+            <button onclick="setTextStyle('normal')">Normal</button>
+            <button onclick="setTextStyle('shadow')">Shadow</button>
+            <button onclick="setTextStyle('outline')">Outline</button>
+            <button onclick="setTextStyle('glow')">Glow</button>
+            <button onclick="setTextStyle('3d')">3D</button>
+            <button onclick="setTextStyle('gradient')">Gradient</button>
+        </div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="card">
+
+        <h2>🚀 Export MP4</h2>
+
+        <button
+            id="exportBtn"
+            class="primary"
+            onclick="exportMP4()"
+        >
+            📥 EXPORT MP4
+        </button>
+
+        <button
+            class="danger"
+            onclick="stopExport()"
+        >
+            ⛔ STOP
+        </button>
+
+        <div class="progress">
+            <div id="progressBar"></div>
+        </div>
+
+        <div id="exportStatus" class="status">
+            Ready.
+        </div>
+
+        <div id="downloadBox" class="downloadBox">
+            <a id="downloadLink" href="#" download="RKG-EDITZ.mp4">
+                📥 Download RKG-EDITZ.mp4
+            </a>
+        </div>
+
+    </div>
+
+    <!-- RESET -->
+    <div class="card">
+        <button onclick="resetEditor()">
+            ♻️ RESET EVERYTHING
+        </button>
+    </div>
+
 </div>
 
-<!-- PREVIEW -->
-<div class="card">
-<h2>🎬 Preview</h2>
-<div class="preview">
-<canvas id="canvas" width="900" height="600"></canvas>
-</div>
-</div>
-
-<!-- EFFECTS -->
-<div class="card">
-<h2>🎨 10 Effects</h2>
-
-<div class="grid">
-<button onclick="effect('normal')">Normal</button>
-<button onclick="effect('grayscale')">Grayscale</button>
-<button onclick="effect('sepia')">Sepia</button>
-<button onclick="effect('invert')">Invert</button>
-<button onclick="effect('blur')">Blur</button>
-<button onclick="effect('brightness')">Brightness</button>
-<button onclick="effect('contrast')">Contrast</button>
-<button onclick="effect('saturate')">Saturation</button>
-<button onclick="effect('vintage')">Vintage</button>
-<button onclick="effect('glow')">Glow</button>
-</div>
-
-<div class="rangeBox">
-<label>Effect Amount</label>
-<input id="amount" type="range" min="0" max="200" value="100"
-oninput="redraw()">
-</div>
-</div>
-
-<!-- FONTS -->
-<div class="card">
-<h2>🔤 Fonts</h2>
-
-<select id="fontSelect" onchange="redraw()">
-
-<option value="Poppins">Poppins</option>
-<option value="Roboto">Roboto</option>
-<option value="Oswald">Oswald</option>
-<option value="Lobster">Lobster</option>
-<option value="Pacifico">Pacifico</option>
-<option value="Playfair Display">Playfair Display</option>
-
-<option value="Noto Sans Kannada">Noto Sans Kannada</option>
-<option value="Noto Serif Kannada">Noto Serif Kannada</option>
-<option value="Baloo Tamma 2">Baloo Tamma 2</option>
-
-</select>
-
-<div class="small">
-Kannada example: ನಮಸ್ಕಾರ RKG EDITZ
-</div>
-</div>
-
-<!-- TEXT -->
-<div class="card">
-<h2>✍️ Text</h2>
-
-<input id="textInput"
-placeholder="Text / ಕನ್ನಡ text type madi..."
-oninput="redraw()">
-
-<div class="grid">
-<button onclick="textStyle('normal')">Normal</button>
-<button onclick="textStyle('shadow')">Shadow</button>
-<button onclick="textStyle('outline')">Outline</button>
-<button onclick="textStyle('glow')">Glow</button>
-<button onclick="textStyle('3d')">3D</button>
-<button onclick="textStyle('gradient')">Gradient</button>
-</div>
-
-<div class="rangeBox">
-<label>Text Size</label>
-<input id="textSize" type="range" min="15" max="150" value="55"
-oninput="redraw()">
-</div>
-</div>
-
-<!-- LOGO -->
-<div class="card">
-<h2>🏷️ Logo</h2>
-
-<input id="logoInput" type="file" accept="image/*">
-
-<button class="primary" onclick="addLogo()">Add Logo</button>
-<button onclick="removeLogo()">Remove Logo</button>
-</div>
-
-<!-- BACKGROUND -->
-<div class="card">
-<h2>🖼️ Background Remove</h2>
-
-<button class="primary" onclick="removeBackground()">
-Remove Background
-</button>
-
-<button onclick="restoreBackground()">
-Restore
-</button>
-
-<p class="small">
-Simple browser-based background removal. White/light background pixels
-are made transparent.
-</p>
-</div>
-
-<!-- MUSIC -->
-<div class="card">
-<h2>🎵 Music</h2>
-
-<button onclick="playMusic()">▶ Play</button>
-<button onclick="pauseMusic()">⏸ Pause</button>
-<button onclick="stopMusic()">⏹ Stop</button>
-
-<div class="rangeBox">
-<label>Volume</label>
-<input id="volume" type="range" min="0" max="100" value="100"
-oninput="changeVolume()">
-</div>
-</div>
-
-<!-- ACTION -->
-<div class="card">
-<h2>⚙️ Actions</h2>
-
-<button class="primary" onclick="redraw()">🔄 Apply</button>
-
-<button onclick="resetAll()">♻️ Reset</button>
-
-<button class="primary" onclick="downloadImage()">
-📥 Download Image
-</button>
-</div>
-
-</div>
-
-<script>
-
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-
-let image=null;
-let logo=null;
-let currentEffect="normal";
-let currentTextStyle="normal";
-let originalImageData=null;
-
-const statusBox=document.getElementById("status");
-
-function status(t){
- statusBox.textContent=t;
-}
-
-/* IMAGE UPLOAD */
-
-document.getElementById("imageInput").onchange=function(e){
-
- const file=e.target.files[0];
- if(!file)return;
-
- const reader=new FileReader();
-
- reader.onload=function(ev){
-
-  image=new Image();
-
-  image.onload=function(){
-
-   canvas.width=image.width;
-   canvas.height=image.height;
-
-   redraw();
-
-   status("✅ Image loaded");
-  };
-
-  image.src=ev.target.result;
- };
-
- reader.readAsDataURL(file);
-};
-
-/* VIDEO */
-
-document.getElementById("videoInput").onchange=function(e){
-
- const file=e.target.files[0];
-
- if(!file)return;
-
- const url=URL.createObjectURL(file);
-
- const video=document.createElement("video");
-
- video.src=url;
- video.controls=true;
- video.autoplay=false;
- video.muted=true;
-
- video.onloadeddata=function(){
-
-  canvas.width=video.videoWidth;
-  canvas.height=video.videoHeight;
-
-  function drawVideo(){
-
-   if(!video.paused && !video.ended){
-
-    ctx.drawImage(video,0,0,canvas.width,canvas.height);
-
-    requestAnimationFrame(drawVideo);
-   }
-  }
-
-  video.play();
-
-  drawVideo();
-
- };
-
- status("🎬 Video loaded");
-};
-
-/* MUSIC */
-
-document.getElementById("musicInput").onchange=function(e){
-
- const file=e.target.files[0];
-
- if(!file)return;
-
- const url=URL.createObjectURL(file);
-
- const audio=document.getElementById("audio");
-
- audio.src=url;
-
- audio.load();
-
- status("🎵 Music loaded");
-};
-
-function playMusic(){
- document.getElementById("audio").play();
-}
-
-function pauseMusic(){
- document.getElementById("audio").pause();
-}
-
-function stopMusic(){
- const a=document.getElementById("audio");
- a.pause();
- a.currentTime=0;
-}
-
-function changeVolume(){
- document.getElementById("audio").volume=
- document.getElementById("volume").value/100;
-}
-
-/* EFFECTS */
-
-function effect(type){
-
- currentEffect=type;
-
- redraw();
-
- status("🎨 Effect: "+type);
-}
-
-function getFilter(){
-
- const amount=document.getElementById("amount").value;
-
- switch(currentEffect){
-
- case "grayscale":
-  return `grayscale(${amount}%)`;
-
- case "sepia":
-  return `sepia(${amount}%)`;
-
- case "invert":
-  return `invert(${amount}%)`;
-
- case "blur":
-  return `blur(${Math.max(0,amount/40)}px)`;
-
- case "brightness":
-  return `brightness(${amount}%)`;
-
- case "contrast":
-  return `contrast(${amount}%)`;
-
- case "saturate":
-  return `saturate(${amount}%)`;
-
- case "vintage":
-  return `sepia(45%) contrast(115%) saturate(80%)`;
-
- case "glow":
-  return `brightness(115%) saturate(130%)`;
-
- default:
-  return "none";
- }
-}
-
-/* TEXT STYLE */
-
-function textStyle(type){
-
- currentTextStyle=type;
-
- redraw();
-
- status("✍️ Text style: "+type);
-}
-
-/* DRAW */
-
-function redraw(){
-
- if(!image){
-
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  ctx.fillStyle="#111";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
-  ctx.fillStyle="#777";
-  ctx.font="30px Poppins";
-  ctx.textAlign="center";
-  ctx.fillText("RKG EDITZ",canvas.width/2,canvas.height/2);
-
-  return;
- }
-
- ctx.clearRect(0,0,canvas.width,canvas.height);
-
- ctx.save();
-
- ctx.filter=getFilter();
-
- ctx.drawImage(
-  image,
-  0,
-  0,
-  canvas.width,
-  canvas.height
- );
-
- ctx.restore();
-
- drawText();
-
- if(logo){
-  ctx.drawImage(logo,30,30,130,130);
- }
-}
-
-/* TEXT */
-
-function drawText(){
-
- const text=document.getElementById("textInput").value;
-
- if(!text)return;
-
- const size=document.getElementById("textSize").value;
-
- const font=document.getElementById("fontSelect").value;
-
- ctx.font=`700 ${size}px "${font}"`;
-
- ctx.textAlign="center";
-
- const x=canvas.width/2;
- const y=canvas.height-80;
-
- if(currentTextStyle==="shadow"){
-
-  ctx.shadowColor="black";
-  ctx.shadowBlur=15;
-  ctx.shadowOffsetX=8;
-  ctx.shadowOffsetY=8;
-
-  ctx.fillStyle="white";
-  ctx.fillText(text,x,y);
-
- }
-
- else if(currentTextStyle==="outline"){
-
-  ctx.lineWidth=8;
-  ctx.strokeStyle="black";
-  ctx.strokeText(text,x,y);
-
-  ctx.fillStyle="white";
-  ctx.fillText(text,x,y);
-
- }
-
- else if(currentTextStyle==="glow"){
-
-  ctx.shadowColor="#00ffff";
-  ctx.shadowBlur=25;
-
-  ctx.fillStyle="white";
-  ctx.fillText(text,x,y);
-
- }
-
- else if(currentTextStyle==="3d"){
-
-  ctx.fillStyle="#000";
-  ctx.fillText(text,x+8,y+8);
-
-  ctx.fillStyle="white";
-  ctx.fillText(text,x,y);
-
- }
-
- else if(currentTextStyle==="gradient"){
-
-  const g=ctx.createLinearGradient(0,0,canvas.width,0);
-
-  g.addColorStop(0,"#ff0066");
-  g.addColorStop(.5,"#00ffff");
-  g.addColorStop(1,"#ffff00");
-
-  ctx.fillStyle=g;
-  ctx.fillText(text,x,y);
-
- }
-
- else{
-
-  ctx.fillStyle="white";
-  ctx.fillText(text,x,y);
-
- }
-}
-
-/* LOGO */
-
-document.getElementById("logoInput").onchange=function(e){
-
- const file=e.target.files[0];
-
- if(!file)return;
-
- const reader=new FileReader();
-
- reader.onload=function(ev){
-
-  logo=new Image();
-
-  logo.onload=function(){
-
-   redraw();
-
-   status("🏷️ Logo loaded");
-  };
-
-  logo.src=ev.target.result;
- };
-
- reader.readAsDataURL(file);
-};
-
-function addLogo(){
-
- if(logo){
-
-  redraw();
-
-  status("✅ Logo added");
-
- }else{
-
-  status("⚠️ First logo upload madi");
- }
-}
-
-function removeLogo(){
-
- logo=null;
-
- redraw();
-
- status("Logo removed");
-}
-
-/* BACKGROUND REMOVE */
-
-function removeBackground(){
-
- if(!image){
-
-  status("⚠️ First image upload madi");
-  return;
- }
-
- ctx.clearRect(0,0,canvas.width,canvas.height);
-
- ctx.drawImage(image,0,0,canvas.width,canvas.height);
-
- const data=ctx.getImageData(
-  0,0,canvas.width,canvas.height
- );
-
- originalImageData=new Uint8ClampedArray(data.data);
-
- for(let i=0;i<data.data.length;i+=4){
-
-  const r=data.data[i];
-  const g=data.data[i+1];
-  const b=data.data[i+2];
-
-  if(r>220 && g>220 && b>220){
-
-   data.data[i+3]=0;
-  }
- }
-
- ctx.putImageData(data,0,0);
-
- drawText();
-
- status("🖼️ Light background removed");
-}
-
-/* RESTORE */
-
-function restoreBackground(){
-
- redraw();
-
- status("♻️ Background restored");
-}
-
-/* DOWNLOAD */
-
-function downloadImage(){
-
- const link=document.createElement("a");
-
- link.download="RKG-EDITZ.png";
-
- link.href=canvas.toDataURL("image/png");
-
- link.click();
-
- status("📥 Download started");
-}
-
-/* RESET */
-
-function resetAll(){
-
- image=null;
- logo=null;
- currentEffect="normal";
- currentTextStyle="normal";
-
- document.getElementById("imageInput").value="";
- document.getElementById("videoInput").value="";
- document.getElementById("logoInput").value="";
- document.getElementById("musicInput").value="";
- document.getElementById("textInput").value="";
-
- const audio=document.getElementById("audio");
-
- audio.pause();
- audio.src="";
-
- ctx.clearRect(0,0,canvas.width,canvas.height);
-
- redraw();
-
- status("♻️ Reset complete");
-}
-
-redraw();
-
-</script>
+<script type="module" src="./script.js"></script>
 
 </body>
-  </html>
+</html>
