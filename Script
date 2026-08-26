@@ -1,1 +1,1092 @@
 
+import {
+    FFmpeg
+} from "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js";
+
+import {
+    fetchFile,
+    toBlobURL
+} from "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/esm/index.js";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const videoInput =
+    document.getElementById("videoInput");
+
+const musicInput =
+    document.getElementById("musicInput");
+
+const sourceVideo =
+    document.getElementById("sourceVideo");
+
+const music =
+    document.getElementById("music");
+
+const canvas =
+    document.getElementById("canvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const videoStatus =
+    document.getElementById("videoStatus");
+
+const exportStatus =
+    document.getElementById("exportStatus");
+
+const progressBar =
+    document.getElementById("progressBar");
+
+const exportBtn =
+    document.getElementById("exportBtn");
+
+const downloadBox =
+    document.getElementById("downloadBox");
+
+const downloadLink =
+    document.getElementById("downloadLink");
+
+const effectAmount =
+    document.getElementById("effectAmount");
+
+const textInput =
+    document.getElementById("textInput");
+
+const textSize =
+    document.getElementById("textSize");
+
+const fontSelect =
+    document.getElementById("fontSelect");
+
+const musicVolume =
+    document.getElementById("musicVolume");
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let videoFile = null;
+let musicFile = null;
+
+let videoURL = null;
+let musicURL = null;
+
+let currentEffect = "normal";
+let currentTextStyle = "normal";
+
+let animationID = null;
+
+let exporting = false;
+let stopRequested = false;
+
+let ffmpeg = null;
+let ffmpegLoaded = false;
+
+let finalURL = null;
+
+
+/* =========================================================
+   HELPER
+========================================================= */
+
+function setStatus(element, text) {
+    if (element) {
+        element.textContent = text;
+    }
+}
+
+function setProgress(value) {
+
+    value = Math.max(
+        0,
+        Math.min(100, value)
+    );
+
+    progressBar.style.width =
+        value + "%";
+}
+
+function wait(ms) {
+    return new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+}
+
+
+/* =========================================================
+   VIDEO UPLOAD
+========================================================= */
+
+videoInput.addEventListener(
+    "change",
+    async function () {
+
+        const file = this.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        videoFile = file;
+
+        if (videoURL) {
+            URL.revokeObjectURL(videoURL);
+        }
+
+        videoURL =
+            URL.createObjectURL(file);
+
+        sourceVideo.src = videoURL;
+
+        sourceVideo.load();
+
+        sourceVideo.onloadedmetadata =
+            function () {
+
+                const width =
+                    sourceVideo.videoWidth;
+
+                const height =
+                    sourceVideo.videoHeight;
+
+                /*
+                   Canvas dimensions should preferably
+                   be even because H.264 requires
+                   even dimensions.
+                */
+
+                canvas.width =
+                    width % 2 === 0
+                        ? width
+                        : width - 1;
+
+                canvas.height =
+                    height % 2 === 0
+                        ? height
+                        : height - 1;
+
+                setStatus(
+                    videoStatus,
+                    "✅ Video loaded: " +
+                    canvas.width +
+                    " × " +
+                    canvas.height +
+                    " | " +
+                    sourceVideo.duration.toFixed(1) +
+                    " sec"
+                );
+
+                sourceVideo.currentTime = 0;
+
+                drawFrame();
+            };
+    }
+);
+
+
+/* =========================================================
+   MUSIC UPLOAD
+========================================================= */
+
+musicInput.addEventListener(
+    "change",
+    function () {
+
+        const file = this.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        musicFile = file;
+
+        if (musicURL) {
+            URL.revokeObjectURL(musicURL);
+        }
+
+        musicURL =
+            URL.createObjectURL(file);
+
+        music.src = musicURL;
+
+        music.load();
+
+        setStatus(
+            exportStatus,
+            "🎵 Music loaded: " +
+            file.name
+        );
+    }
+);
+
+
+/* =========================================================
+   MUSIC VOLUME
+========================================================= */
+
+musicVolume.addEventListener(
+    "input",
+    function () {
+
+        music.volume =
+            Number(this.value);
+
+    }
+);
+
+
+/* =========================================================
+   EFFECTS
+========================================================= */
+
+window.setEffect = function (effect) {
+
+    currentEffect = effect;
+
+    drawFrame();
+
+    setStatus(
+        exportStatus,
+        "🎨 Effect: " + effect
+    );
+};
+
+
+function getFilter() {
+
+    const amount =
+        Number(effectAmount.value);
+
+    switch (currentEffect) {
+
+        case "grayscale":
+            return `grayscale(${amount}%)`;
+
+        case "sepia":
+            return `sepia(${amount}%)`;
+
+        case "invert":
+            return `invert(${amount}%)`;
+
+        case "blur":
+            return `blur(${amount / 35}px)`;
+
+        case "brightness":
+            return `brightness(${amount}%)`;
+
+        case "contrast":
+            return `contrast(${amount}%)`;
+
+        case "saturate":
+            return `saturate(${amount}%)`;
+
+        case "vintage":
+            return `
+                sepia(45%)
+                contrast(120%)
+                saturate(80%)
+            `;
+
+        case "glow":
+            return `
+                brightness(115%)
+                saturate(140%)
+                contrast(105%)
+            `;
+
+        default:
+            return "none";
+    }
+}
+
+
+/* =========================================================
+   TEXT STYLE
+========================================================= */
+
+window.setTextStyle = function (style) {
+
+    currentTextStyle = style;
+
+    drawFrame();
+
+    setStatus(
+        exportStatus,
+        "✍️ Text style: " + style
+    );
+};
+
+
+/* =========================================================
+   DRAW TEXT
+========================================================= */
+
+function drawText() {
+
+    const text =
+        textInput.value.trim();
+
+    if (!text) {
+        return;
+    }
+
+    const size =
+        Number(textSize.value);
+
+    const font =
+        fontSelect.value;
+
+    const x =
+        canvas.width / 2;
+
+    const y =
+        canvas.height - 70;
+
+    ctx.save();
+
+    ctx.font =
+        `700 ${size}px "${font}"`;
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    if (currentTextStyle === "shadow") {
+
+        ctx.shadowColor =
+            "rgba(0,0,0,.9)";
+
+        ctx.shadowBlur = 15;
+
+        ctx.shadowOffsetX = 7;
+        ctx.shadowOffsetY = 7;
+
+        ctx.fillStyle = "#ffffff";
+
+        ctx.fillText(
+            text,
+            x,
+            y
+        );
+    }
+
+    else if (currentTextStyle === "outline") {
+
+        ctx.shadowColor =
+            "transparent";
+
+        ctx.lineWidth =
+            Math.max(4, size / 12);
+
+        ctx.strokeStyle =
+            "#000000";
+
+        ctx.strokeText(
+            text,
+            x,
+            y
+        );
+
+        ctx.fillStyle =
+            "#ffffff";
+
+        ctx.fillText(
+            text,
+            x,
+            y
+        );
+    }
+
+    else if (currentTextStyle === "glow") {
+
+        ctx.shadowColor =
+            "#00eaff";
+
+        ctx.shadowBlur = 25;
+
+        ctx.fillStyle =
+            "#ffffff";
+
+        ctx.fillText(
+            text,
+            x,
+            y
+        );
+    }
+
+    else if (currentTextStyle === "3d") {
+
+        ctx.shadowColor =
+            "transparent";
+
+        ctx.fillStyle =
+            "#111111";
+
+        for (let i = 8; i >= 1; i--) {
+
+            ctx.fillText(
+                text,
+                x + i,
+                y + i
+            );
+        }
+
+        ctx.fillStyle =
+            "#ffffff";
+
+        ctx.fillText(
+            text,
+            x,
+            y
+        );
+    }
+
+    else if (currentTextStyle === "gradient") {
+
+        const gradient =
+            ctx.createLinearGradient(
+                0,
+                0,
+                canvas.width,
+                0
+            );
+
+        gradient.addColorStop(
+            0,
+            "#ff0066"
+        );
+
+        gradient.addColorStop(
+            0.5,
+            "#00eaff"
+        );
+
+        gradient.addColorStop(
+            1,
+            "#fff000"
+        );
+
+        ctx.fillStyle =
+            gradient;
+
+        ctx.fillText(
+            text,
+            x,
+            y
+        );
+    }
+
+    else {
+
+        ctx.shadowColor =
+            "transparent";
+
+        ctx.fillStyle =
+            "#ffffff";
+
+        ctx.fillText(
+            text,
+            x,
+            y
+        );
+    }
+
+    ctx.restore();
+}
+
+
+/* =========================================================
+   DRAW VIDEO FRAME
+========================================================= */
+
+function drawFrame() {
+
+    if (!sourceVideo.videoWidth) {
+        return;
+    }
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.save();
+
+    ctx.filter =
+        getFilter();
+
+    ctx.drawImage(
+        sourceVideo,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.restore();
+
+    drawText();
+}
+
+
+/* =========================================================
+   UPDATE PREVIEW
+========================================================= */
+
+function updatePreview() {
+
+    drawFrame();
+
+}
+
+
+effectAmount.addEventListener(
+    "input",
+    updatePreview
+);
+
+textInput.addEventListener(
+    "input",
+    updatePreview
+);
+
+textSize.addEventListener(
+    "input",
+    updatePreview
+);
+
+fontSelect.addEventListener(
+    "change",
+    updatePreview
+);
+
+
+/* =========================================================
+   LIVE VIDEO PREVIEW
+========================================================= */
+
+sourceVideo.addEventListener(
+    "play",
+    function () {
+
+        if (animationID) {
+            cancelAnimationFrame(animationID);
+        }
+
+        function loop() {
+
+            drawFrame();
+
+            if (!sourceVideo.paused &&
+                !sourceVideo.ended) {
+
+                animationID =
+                    requestAnimationFrame(loop);
+            }
+        }
+
+        loop();
+    }
+);
+
+sourceVideo.addEventListener(
+    "pause",
+    function () {
+
+        if (animationID) {
+
+            cancelAnimationFrame(
+                animationID
+            );
+
+            animationID = null;
+        }
+
+        drawFrame();
+    }
+);
+
+sourceVideo.addEventListener(
+    "seeked",
+    drawFrame
+);
+
+
+/* =========================================================
+   LOAD FFMPEG
+========================================================= */
+
+async function loadFFmpeg() {
+
+    if (ffmpegLoaded) {
+        return;
+    }
+
+    setStatus(
+        exportStatus,
+        "⏳ MP4 engine loading... First time ಸ್ವಲ್ಪ time ಬೇಕು."
+    );
+
+    ffmpeg =
+        new FFmpeg();
+
+    ffmpeg.on(
+        "progress",
+        function ({ progress }) {
+
+            if (!exporting) {
+                return;
+            }
+
+            const percent =
+                Math.round(
+                    progress * 100
+                );
+
+            /*
+              FFmpeg conversion progress.
+              Keep it below 100 until complete.
+            */
+
+            setProgress(
+                Math.min(99, percent)
+            );
+
+            setStatus(
+                exportStatus,
+                "⚙️ MP4 conversion: " +
+                percent +
+                "%"
+            );
+        }
+    );
+
+    ffmpeg.on(
+        "log",
+        function ({ message }) {
+
+            console.log(
+                "[FFmpeg]",
+                message
+            );
+        }
+    );
+
+    const baseURL =
+        "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm";
+
+    const coreURL =
+        await toBlobURL(
+            `${baseURL}/ffmpeg-core.js`,
+            "text/javascript"
+        );
+
+    const wasmURL =
+        await toBlobURL(
+            `${baseURL}/ffmpeg-core.wasm`,
+            "application/wasm"
+        );
+
+    await ffmpeg.load({
+        coreURL,
+        wasmURL
+    });
+
+    ffmpegLoaded = true;
+
+    setStatus(
+        exportStatus,
+        "✅ MP4 engine ready"
+    );
+}
+
+
+/* =========================================================
+   RECORD CANVAS + AUDIO
+========================================================= */
+
+async function createEditedVideo() {
+
+    if (!videoFile) {
+        throw new Error(
+            "First video upload madi."
+        );
+    }
+
+    /*
+      Canvas recording.
+      30 FPS is a good balance for mobile.
+    */
+
+    const fps = 30;
+
+    const canvasStream =
+        canvas.captureStream(fps);
+
+    /*
+      Audio capture.
+      Use AudioContext so the uploaded
+      music can become a MediaStream track.
+    */
+
+    let audioContext = null;
+    let audioDestination = null;
+    let audioSource = null;
+    let audioGain = null;
+
+    let audioStream = null;
+
+    if (musicFile) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        audioDestination =
+            audioContext.createMediaStreamDestination();
+
+        audioSource =
+            audioContext.createMediaElementSource(
+                music
+            );
+
+        audioGain =
+            audioContext.createGain();
+
+        audioGain.gain.value =
+            Number(musicVolume.value);
+
+        audioSource.connect(
+            audioGain
+        );
+
+        /*
+          Send audio to phone speaker/headphones
+          and to recorder.
+        */
+
+        audioGain.connect(
+            audioContext.destination
+        );
+
+        audioGain.connect(
+            audioDestination
+        );
+
+        audioStream =
+            audioDestination.stream;
+    }
+
+
+    /*
+      Combine video canvas stream
+      with music stream.
+    */
+
+    const combinedStream =
+        new MediaStream();
+
+    canvasStream
+        .getVideoTracks()
+        .forEach(
+            track =>
+                combinedStream.addTrack(track)
+        );
+
+    if (audioStream) {
+
+        audioStream
+            .getAudioTracks()
+            .forEach(
+                track =>
+                    combinedStream.addTrack(track)
+            );
+    }
+
+
+    /*
+      Chrome normally supports WebM recording.
+      FFmpeg later converts WebM -> MP4.
+    */
+
+    let mimeType = "";
+
+    const candidates = [
+        "video/webm;codecs=vp9",
+        "video/webm;codecs=vp8",
+        "video/webm"
+    ];
+
+    for (const type of candidates) {
+
+        if (
+            MediaRecorder.isTypeSupported(
+                type
+            )
+        ) {
+
+            mimeType = type;
+            break;
+        }
+    }
+
+    if (!mimeType) {
+
+        throw new Error(
+            "Your browser does not support video recording."
+        );
+    }
+
+
+    const recorder =
+        new MediaRecorder(
+            combinedStream,
+            {
+                mimeType,
+                videoBitsPerSecond: 6_000_000
+            }
+        );
+
+
+    const chunks = [];
+
+    recorder.ondataavailable =
+        function (event) {
+
+            if (
+                event.data &&
+                event.data.size > 0
+            ) {
+
+                chunks.push(
+                    event.data
+                );
+            }
+        };
+
+
+    const finished =
+        new Promise(
+            (resolve, reject) => {
+
+                recorder.onerror =
+                    function (event) {
+
+                        reject(
+                            event.error ||
+                            new Error(
+                                "Recording failed."
+                            )
+                        );
+                    };
+
+                recorder.onstop =
+                    function () {
+
+                        resolve(
+                            new Blob(
+                                chunks,
+                                {
+                                    type:
+                                        mimeType
+                                }
+                            )
+                        );
+                    };
+            }
+        );
+
+
+    /*
+      Reset playback.
+    */
+
+    sourceVideo.pause();
+    sourceVideo.currentTime = 0;
+
+    if (musicFile) {
+
+        music.pause();
+        music.currentTime = 0;
+        music.volume =
+            Number(musicVolume.value);
+
+        if (
+            audioContext.state ===
+            "suspended"
+        ) {
+
+            await audioContext.resume();
+        }
+    }
+
+
+    recorder.start(1000);
+
+    /*
+      Start both as close together as possible.
+    */
+
+    const startPromise =
+        sourceVideo.play();
+
+    if (musicFile) {
+        await music.play();
+    }
+
+    await startPromise;
+
+
+    /*
+      Recording loop.
+    */
+
+    await new Promise(
+        (resolve) => {
+
+            let lastUpdate = 0;
+
+            function recordLoop() {
+
+                if (stopRequested) {
+
+                    try {
+                        recorder.stop();
+                    } catch (_) {}
+
+                    resolve();
+                    return;
+                }
+
+
+                if (sourceVideo.ended) {
+
+                    try {
+                        recorder.stop();
+                    } catch (_) {}
+
+                    resolve();
+                    return;
+                }
+
+
+                drawFrame();
+
+
+                const duration =
+                    sourceVideo.duration;
+
+                const current =
+                    sourceVideo.currentTime;
+
+                if (
+                    duration &&
+                    Number.isFinite(duration)
+                ) {
+
+                    const percent =
+                        (current / duration) *
+                        45;
+
+                    setProgress(percent);
+
+
+                    const now =
+                        performance.now();
+
+                    if (
+                        now - lastUpdate >
+                        500
+                    ) {
+
+                        setStatus(
+                            exportStatus,
+                            "🎬 Rendering video: " +
+                            Math.round(
+                                percent / 45 * 100
+                            ) +
+                            "%"
+                        );
+
+                        lastUpdate = now;
+                    }
+                }
+
+
+                requestAnimationFrame(
+                    recordLoop
+                );
+            }
+
+            recordLoop();
+        }
+    );
+
+
+    sourceVideo.pause();
+
+    if (musicFile) {
+        music.pause();
+    }
+
+
+    const webmBlob =
+        await finished;
+
+
+    /*
+      Stop tracks.
+    */
+
+    canvasStream
+        .getTracks()
+        .forEach(
+            track =>
+                track.stop()
+        );
+
+    if (audioStream) {
+
+        audioStream
+            .getTracks()
+            .forEach(
+                track =>
+                    track.stop()
+            );
+    }
+
+    if (audioContext) {
+
+        try {
+            await audioContext.close();
+        } catch (_) {}
+    }
+
+
+    return webmBlob;
+}
+
+
+/* =========================================================
+   MP4 EXPORT
+========================================================= */
+
+window.exportMP4 =
+async function () {
+
+    if (exporting) {
+        return;
+    }
+
+    if (!videoFile) {
+
+        setStatus(
+            exportStatus,
+            "⚠️ First video upload madi
