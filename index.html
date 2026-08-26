@@ -1,505 +1,759 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="kn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>RKG EDITZ</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Tamma+2:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Noto+Serif+Kannada:wght@400;600;700&family=Roboto:wght@400;500;700;900&family=Poppins:wght@400;500;600;700;800&family=Oswald:wght@400;500;700&family=Lobster&family=Pacifico&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial,sans-serif;
-}
-
+*{box-sizing:border-box}
 body{
-  background:#050505;
-  color:white;
+ margin:0;
+ background:#080808;
+ color:white;
+ font-family:Poppins,Arial,sans-serif;
 }
-
-.app{
-  max-width:1100px;
-  min-height:100vh;
-  margin:auto;
-  background:#090909;
-  overflow:hidden;
+header{
+ padding:16px;
+ text-align:center;
+ background:linear-gradient(135deg,#ff0066,#7200ff);
 }
-
-/* HEADER */
-.header{
-  height:75px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 16px;
-  border-bottom:1px solid #252525;
-}
-
 .logo{
-  font-size:34px;
-  font-weight:900;
-  font-style:italic;
+ font-size:28px;
+ font-weight:900;
+ letter-spacing:2px;
+ text-shadow:0 0 15px #fff;
 }
-
-.logo span{
-  color:#ffc400;
+.container{
+ max-width:1100px;
+ margin:auto;
+ padding:15px;
 }
-
-.editz{
-  text-align:center;
-  color:#ffc400;
-  font-size:9px;
-  letter-spacing:5px;
+.card{
+ background:#151515;
+ border:1px solid #292929;
+ border-radius:18px;
+ padding:15px;
+ margin-bottom:15px;
+ box-shadow:0 8px 30px #0008;
 }
-
-.header button{
-  background:#111;
-  color:white;
-  border:1px solid #444;
-  border-radius:10px;
-  padding:10px 13px;
+h2{
+ margin:4px 0 14px;
+ font-size:18px;
 }
-
-.export{
-  background:#ffc400!important;
-  color:#111!important;
-  font-weight:bold;
+button,input,select{
+ font:inherit;
 }
-
-/* EDITOR */
-.editor{
-  display:grid;
-  grid-template-columns:90px 1fr 90px;
-  gap:8px;
-  padding:8px;
+button{
+ border:0;
+ border-radius:10px;
+ padding:11px 14px;
+ margin:4px;
+ background:#252525;
+ color:white;
+ cursor:pointer;
 }
-
-.side{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
+button:hover{background:#ff0066}
+.primary{
+ background:linear-gradient(135deg,#ff0066,#7200ff);
 }
-
-.tool{
-  min-height:65px;
-  background:#0b0b0b;
-  border:1px solid #292929;
-  border-radius:12px;
-  color:white;
+input[type=file]{
+ width:100%;
+ padding:10px;
+ background:#222;
+ border-radius:10px;
 }
-
-.tool:hover{
-  border-color:#ffc400;
-  color:#ffc400;
+input[type=text]{
+ width:100%;
+ padding:12px;
+ border-radius:10px;
+ border:1px solid #444;
+ background:#0d0d0d;
+ color:white;
+ margin-bottom:8px;
 }
-
-.tool b{
-  display:block;
-  font-size:23px;
-  margin-bottom:5px;
+input[type=range]{width:100%}
+select{
+ width:100%;
+ padding:11px;
+ background:#222;
+ color:white;
+ border:1px solid #444;
+ border-radius:10px;
+ margin-bottom:8px;
 }
-
-/* PREVIEW */
 .preview{
-  height:500px;
-  background:#000;
-  border-radius:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-  overflow:hidden;
+ min-height:280px;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:
+ radial-gradient(circle at center,#242424,#090909);
+ border-radius:15px;
+ overflow:hidden;
+ position:relative;
 }
-
-#canvas{
-  max-width:100%;
-  max-height:100%;
-  background:#111;
+canvas{
+ max-width:100%;
+ max-height:600px;
+ border-radius:10px;
+ background:#111;
 }
-
-.empty{
-  position:absolute;
-  text-align:center;
-  color:#777;
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+ gap:7px;
 }
-
-.empty strong{
-  color:white;
-  font-size:20px;
+.small{
+ font-size:12px;
+ color:#aaa;
 }
-
-/* TEXT */
-.previewText{
-  position:absolute;
-  top:15%;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:35px;
-  font-weight:bold;
-  text-shadow:0 3px 10px black;
-  display:none;
+.rangeBox{
+ margin:10px 0;
 }
-
-/* TIMELINE */
-.timelineArea{
-  padding:10px;
+.badge{
+ display:inline-block;
+ padding:5px 9px;
+ border-radius:20px;
+ background:#222;
+ margin:3px;
+ font-size:12px;
 }
-
-.time{
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-  color:#ddd;
+.status{
+ padding:10px;
+ border-radius:10px;
+ background:#101010;
+ color:#7cffaa;
+ margin-top:8px;
 }
-
-.controls{
-  text-align:center;
-  margin:7px;
-}
-
-.controls button{
-  background:none;
-  color:white;
-  border:0;
-  font-size:25px;
-  margin:0 18px;
-}
-
-.controls .play{
-  font-size:38px;
-}
-
-.track{
-  height:55px;
-  background:#664c12;
-  border-radius:8px;
-  padding:18px;
-}
-
-.musicTrack{
-  height:38px;
-  margin-top:6px;
-  padding:11px;
-  border-radius:7px;
-  background:#36165e;
-}
-
-.textTrack{
-  height:38px;
-  margin-top:6px;
-  padding:11px;
-  border-radius:7px;
-  background:#715314;
-}
-
-.effectTrack{
-  height:38px;
-  margin-top:6px;
-  padding:11px;
-  border-radius:7px;
-  background:#07543e;
-}
-
-#seek{
-  width:100%;
-  accent-color:#ffc400;
-}
-
-/* MAIN TOOLS */
-.mainTools{
-  display:flex;
-  overflow-x:auto;
-  border-top:1px solid #292929;
-  background:#101216;
-}
-
-.mainTools button{
-  min-width:105px;
-  padding:13px 5px;
-  color:white;
-  background:none;
-  border:0;
-}
-
-.mainTools button.active{
-  color:#ffc400;
-}
-
-.mainTools b{
-  display:block;
-  font-size:23px;
-  margin-bottom:5px;
-}
-
-/* BOTTOM */
-.bottom{
-  display:flex;
-  justify-content:space-around;
-  border-top:1px solid #292929;
-  background:#101216;
-}
-
-.bottom button{
-  min-width:100px;
-  padding:12px 5px;
-  color:white;
-  background:none;
-  border:0;
-}
-
-.bottom b{
-  display:block;
-  font-size:23px;
-}
-
-.new{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  background:#ffc400!important;
-  color:#111!important;
-  font-size:30px!important;
-}
-
-/* PANEL */
-.panel{
-  position:fixed;
-  left:50%;
-  bottom:15px;
-  transform:translateX(-50%);
-  width:min(600px,94%);
-  background:#18191d;
-  border:1px solid #555;
-  border-radius:16px;
-  padding:18px;
-  z-index:20;
-  box-shadow:0 10px 50px #000;
-}
-
-.panel h3{
-  margin-bottom:12px;
-}
-
-.panel button,
-.panel input{
-  padding:10px;
-  margin:4px;
-  border-radius:8px;
-  border:1px solid #555;
-  background:#090909;
-  color:white;
-}
-
-.panel button{
-  background:#ffc400;
-  color:#111;
-  font-weight:bold;
-}
-
-.hidden{
-  display:none;
-}
-
-@media(max-width:650px){
-
-.editor{
-  grid-template-columns:60px 1fr 60px;
-}
-
-.tool{
-  min-height:55px;
-}
-
-.tool b{
-  font-size:18px;
-}
-
-.tool small{
-  font-size:9px;
-}
-
-.preview{
-  height:390px;
-}
-
-.mainTools button{
-  min-width:75px;
-}
-
-.mainTools b{
-  font-size:20px;
-}
-
-.bottom button{
-  min-width:65px;
-  font-size:9px;
-}
-
+audio{
+ width:100%;
+ margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<header>
+ <div class="logo">RKG EDITZ</div>
+ <div class="small">VIDEO • PHOTO • MUSIC • TEXT EDITOR</div>
+</header>
 
-<!-- HEADER -->
-<div class="header">
+<div class="container">
 
-<button onclick="history.back()">‹</button>
+<!-- MEDIA -->
+<div class="card">
+<h2>📁 Media Upload</h2>
 
-<div>
-<div class="logo">RKG<span>•</span>G</div>
-<div class="editz">EDITZ</div>
+<input id="imageInput" type="file" accept="image/*">
+
+<br><br>
+
+<input id="videoInput" type="file" accept="video/*">
+
+<br><br>
+
+<input id="musicInput" type="file" accept="audio/*">
+
+<audio id="audio" controls></audio>
+
+<div class="status" id="status">Ready — Media upload madi.</div>
 </div>
 
-<div>
-<button onclick="changeRatio()">▣ 9:16</button>
-<button onclick="showHelp()">?</button>
-<button class="export" onclick="exportProject()">EXPORT<br>HD</button>
-</div>
-
-</div>
-
-
-<!-- EDITOR -->
-<div class="editor">
-
-<!-- LEFT -->
-<div class="side">
-
-<button class="tool" onclick="undo()">
-<b>↶</b>
-<small>Undo</small>
-</button>
-
-<button class="tool" onclick="redo()">
-<b>↷</b>
-<small>Redo</small>
-</button>
-
-<button class="tool" onclick="saveProject()">
-<b>▣</b>
-<small>Save</small>
-</button>
-
-<button class="tool" onclick="copyClip()">
-<b>▱</b>
-<small>Copy</small>
-</button>
-
-<button class="tool" onclick="deleteMedia()">
-<b>♜</b>
-<small>Delete</small>
-</button>
-
-</div>
-
-
-<!-- CENTER -->
-<div>
-
+<!-- PREVIEW -->
+<div class="card">
+<h2>🎬 Preview</h2>
 <div class="preview">
-
-<canvas id="canvas" width="720" height="1280"></canvas>
-
-<div class="empty" id="empty">
-<strong>RKG EDITZ</strong><br>
-Tap + New Project to add video or photo
+<canvas id="canvas" width="900" height="600"></canvas>
+</div>
 </div>
 
-<div class="previewText" id="previewText">
-RKG EDITZ
+<!-- EFFECTS -->
+<div class="card">
+<h2>🎨 10 Effects</h2>
+
+<div class="grid">
+<button onclick="effect('normal')">Normal</button>
+<button onclick="effect('grayscale')">Grayscale</button>
+<button onclick="effect('sepia')">Sepia</button>
+<button onclick="effect('invert')">Invert</button>
+<button onclick="effect('blur')">Blur</button>
+<button onclick="effect('brightness')">Brightness</button>
+<button onclick="effect('contrast')">Contrast</button>
+<button onclick="effect('saturate')">Saturation</button>
+<button onclick="effect('vintage')">Vintage</button>
+<button onclick="effect('glow')">Glow</button>
 </div>
 
+<div class="rangeBox">
+<label>Effect Amount</label>
+<input id="amount" type="range" min="0" max="200" value="100"
+oninput="redraw()">
+</div>
 </div>
 
+<!-- FONTS -->
+<div class="card">
+<h2>🔤 Fonts</h2>
 
-<div class="timelineArea">
+<select id="fontSelect" onchange="redraw()">
 
-<div class="time">
-<span id="timeText">00:00 / 00:30</span>
-<span>⛶</span>
+<option value="Poppins">Poppins</option>
+<option value="Roboto">Roboto</option>
+<option value="Oswald">Oswald</option>
+<option value="Lobster">Lobster</option>
+<option value="Pacifico">Pacifico</option>
+<option value="Playfair Display">Playfair Display</option>
+
+<option value="Noto Sans Kannada">Noto Sans Kannada</option>
+<option value="Noto Serif Kannada">Noto Serif Kannada</option>
+<option value="Baloo Tamma 2">Baloo Tamma 2</option>
+
+</select>
+
+<div class="small">
+Kannada example: ನಮಸ್ಕಾರ RKG EDITZ
+</div>
 </div>
 
-<div class="controls">
+<!-- TEXT -->
+<div class="card">
+<h2>✍️ Text</h2>
 
-<button onclick="previous()">|◀</button>
+<input id="textInput"
+placeholder="Text / ಕನ್ನಡ text type madi..."
+oninput="redraw()">
 
-<button class="play" id="playBtn" onclick="playPause()">▶</button>
-
-<button onclick="next()">▶|</button>
-
+<div class="grid">
+<button onclick="textStyle('normal')">Normal</button>
+<button onclick="textStyle('shadow')">Shadow</button>
+<button onclick="textStyle('outline')">Outline</button>
+<button onclick="textStyle('glow')">Glow</button>
+<button onclick="textStyle('3d')">3D</button>
+<button onclick="textStyle('gradient')">Gradient</button>
 </div>
 
-<div class="track" id="clipName">
-No media — tap +
+<div class="rangeBox">
+<label>Text Size</label>
+<input id="textSize" type="range" min="15" max="150" value="55"
+oninput="redraw()">
+</div>
 </div>
 
-<input id="seek" type="range" min="0" max="30" value="0">
+<!-- LOGO -->
+<div class="card">
+<h2>🏷️ Logo</h2>
 
-<div class="musicTrack">
-♫ <span id="musicName">No music</span>
+<input id="logoInput" type="file" accept="image/*">
+
+<button class="primary" onclick="addLogo()">Add Logo</button>
+<button onclick="removeLogo()">Remove Logo</button>
 </div>
 
-<div class="textTrack">
-T <span id="textTrack">RKG EDITZ</span>
-</div>
+<!-- BACKGROUND -->
+<div class="card">
+<h2>🖼️ Background Remove</h2>
 
-<div class="effectTrack">
-★ Glow Effect
-</div>
-
-</div>
-
-</div>
-
-
-<!-- RIGHT -->
-<div class="side">
-
-<button class="tool" onclick="fitMedia()">
-<b>⛶</b>
-<small>Fit</small>
+<button class="primary" onclick="removeBackground()">
+Remove Background
 </button>
 
-<button class="tool" onclick="rotate()">
-<b>⟳</b>
-<small>Rotate</small>
+<button onclick="restoreBackground()">
+Restore
 </button>
 
-<button class="tool" onclick="flip()">
-<b>⇅</b>
-<small>Flip</small>
-</button>
+<p class="small">
+Simple browser-based background removal. White/light background pixels
+are made transparent.
+</p>
+</div>
 
-<button class="tool" onclick="mirror()">
-<b>▥</b>
-<small>Mirror</small>
-</button>
+<!-- MUSIC -->
+<div class="card">
+<h2>🎵 Music</h2>
 
-<button class="tool" onclick="freeze()">
-<b>❄</b>
-<small>Freeze</small>
-</button>
+<button onclick="playMusic()">▶ Play</button>
+<button onclick="pauseMusic()">⏸ Pause</button>
+<button onclick="stopMusic()">⏹ Stop</button>
 
+<div class="rangeBox">
+<label>Volume</label>
+<input id="volume" type="range" min="0" max="100" value="100"
+oninput="changeVolume()">
+</div>
+</div>
+
+<!-- ACTION -->
+<div class="card">
+<h2>⚙️ Actions</h2>
+
+<button class="primary" onclick="redraw()">🔄 Apply</button>
+
+<button onclick="resetAll()">♻️ Reset</button>
+
+<button class="primary" onclick="downloadImage()">
+📥 Download Image
+</button>
 </div>
 
 </div>
 
+<script>
 
-<!-- MAIN TOOLS -->
-<div class="mainTools">
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
 
-<button onclick="openEdit(this)">
-<b>☷</b>
-EDIT
-</button>
+let image=null;
+let logo=null;
+let currentEffect="normal";
+let currentTextStyle="normal";
+let originalImageData=null;
 
-<button onclick="openMusic(this)">
-<b>♫</b>
-MUSIC
-</button>
+const statusBox=document.getElementById("status");
 
-<button onclick="openText(this
+function status(t){
+ statusBox.textContent=t;
+}
+
+/* IMAGE UPLOAD */
+
+document.getElementById("imageInput").onchange=function(e){
+
+ const file=e.target.files[0];
+ if(!file)return;
+
+ const reader=new FileReader();
+
+ reader.onload=function(ev){
+
+  image=new Image();
+
+  image.onload=function(){
+
+   canvas.width=image.width;
+   canvas.height=image.height;
+
+   redraw();
+
+   status("✅ Image loaded");
+  };
+
+  image.src=ev.target.result;
+ };
+
+ reader.readAsDataURL(file);
+};
+
+/* VIDEO */
+
+document.getElementById("videoInput").onchange=function(e){
+
+ const file=e.target.files[0];
+
+ if(!file)return;
+
+ const url=URL.createObjectURL(file);
+
+ const video=document.createElement("video");
+
+ video.src=url;
+ video.controls=true;
+ video.autoplay=false;
+ video.muted=true;
+
+ video.onloadeddata=function(){
+
+  canvas.width=video.videoWidth;
+  canvas.height=video.videoHeight;
+
+  function drawVideo(){
+
+   if(!video.paused && !video.ended){
+
+    ctx.drawImage(video,0,0,canvas.width,canvas.height);
+
+    requestAnimationFrame(drawVideo);
+   }
+  }
+
+  video.play();
+
+  drawVideo();
+
+ };
+
+ status("🎬 Video loaded");
+};
+
+/* MUSIC */
+
+document.getElementById("musicInput").onchange=function(e){
+
+ const file=e.target.files[0];
+
+ if(!file)return;
+
+ const url=URL.createObjectURL(file);
+
+ const audio=document.getElementById("audio");
+
+ audio.src=url;
+
+ audio.load();
+
+ status("🎵 Music loaded");
+};
+
+function playMusic(){
+ document.getElementById("audio").play();
+}
+
+function pauseMusic(){
+ document.getElementById("audio").pause();
+}
+
+function stopMusic(){
+ const a=document.getElementById("audio");
+ a.pause();
+ a.currentTime=0;
+}
+
+function changeVolume(){
+ document.getElementById("audio").volume=
+ document.getElementById("volume").value/100;
+}
+
+/* EFFECTS */
+
+function effect(type){
+
+ currentEffect=type;
+
+ redraw();
+
+ status("🎨 Effect: "+type);
+}
+
+function getFilter(){
+
+ const amount=document.getElementById("amount").value;
+
+ switch(currentEffect){
+
+ case "grayscale":
+  return `grayscale(${amount}%)`;
+
+ case "sepia":
+  return `sepia(${amount}%)`;
+
+ case "invert":
+  return `invert(${amount}%)`;
+
+ case "blur":
+  return `blur(${Math.max(0,amount/40)}px)`;
+
+ case "brightness":
+  return `brightness(${amount}%)`;
+
+ case "contrast":
+  return `contrast(${amount}%)`;
+
+ case "saturate":
+  return `saturate(${amount}%)`;
+
+ case "vintage":
+  return `sepia(45%) contrast(115%) saturate(80%)`;
+
+ case "glow":
+  return `brightness(115%) saturate(130%)`;
+
+ default:
+  return "none";
+ }
+}
+
+/* TEXT STYLE */
+
+function textStyle(type){
+
+ currentTextStyle=type;
+
+ redraw();
+
+ status("✍️ Text style: "+type);
+}
+
+/* DRAW */
+
+function redraw(){
+
+ if(!image){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#111";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#777";
+  ctx.font="30px Poppins";
+  ctx.textAlign="center";
+  ctx.fillText("RKG EDITZ",canvas.width/2,canvas.height/2);
+
+  return;
+ }
+
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ ctx.save();
+
+ ctx.filter=getFilter();
+
+ ctx.drawImage(
+  image,
+  0,
+  0,
+  canvas.width,
+  canvas.height
+ );
+
+ ctx.restore();
+
+ drawText();
+
+ if(logo){
+  ctx.drawImage(logo,30,30,130,130);
+ }
+}
+
+/* TEXT */
+
+function drawText(){
+
+ const text=document.getElementById("textInput").value;
+
+ if(!text)return;
+
+ const size=document.getElementById("textSize").value;
+
+ const font=document.getElementById("fontSelect").value;
+
+ ctx.font=`700 ${size}px "${font}"`;
+
+ ctx.textAlign="center";
+
+ const x=canvas.width/2;
+ const y=canvas.height-80;
+
+ if(currentTextStyle==="shadow"){
+
+  ctx.shadowColor="black";
+  ctx.shadowBlur=15;
+  ctx.shadowOffsetX=8;
+  ctx.shadowOffsetY=8;
+
+  ctx.fillStyle="white";
+  ctx.fillText(text,x,y);
+
+ }
+
+ else if(currentTextStyle==="outline"){
+
+  ctx.lineWidth=8;
+  ctx.strokeStyle="black";
+  ctx.strokeText(text,x,y);
+
+  ctx.fillStyle="white";
+  ctx.fillText(text,x,y);
+
+ }
+
+ else if(currentTextStyle==="glow"){
+
+  ctx.shadowColor="#00ffff";
+  ctx.shadowBlur=25;
+
+  ctx.fillStyle="white";
+  ctx.fillText(text,x,y);
+
+ }
+
+ else if(currentTextStyle==="3d"){
+
+  ctx.fillStyle="#000";
+  ctx.fillText(text,x+8,y+8);
+
+  ctx.fillStyle="white";
+  ctx.fillText(text,x,y);
+
+ }
+
+ else if(currentTextStyle==="gradient"){
+
+  const g=ctx.createLinearGradient(0,0,canvas.width,0);
+
+  g.addColorStop(0,"#ff0066");
+  g.addColorStop(.5,"#00ffff");
+  g.addColorStop(1,"#ffff00");
+
+  ctx.fillStyle=g;
+  ctx.fillText(text,x,y);
+
+ }
+
+ else{
+
+  ctx.fillStyle="white";
+  ctx.fillText(text,x,y);
+
+ }
+}
+
+/* LOGO */
+
+document.getElementById("logoInput").onchange=function(e){
+
+ const file=e.target.files[0];
+
+ if(!file)return;
+
+ const reader=new FileReader();
+
+ reader.onload=function(ev){
+
+  logo=new Image();
+
+  logo.onload=function(){
+
+   redraw();
+
+   status("🏷️ Logo loaded");
+  };
+
+  logo.src=ev.target.result;
+ };
+
+ reader.readAsDataURL(file);
+};
+
+function addLogo(){
+
+ if(logo){
+
+  redraw();
+
+  status("✅ Logo added");
+
+ }else{
+
+  status("⚠️ First logo upload madi");
+ }
+}
+
+function removeLogo(){
+
+ logo=null;
+
+ redraw();
+
+ status("Logo removed");
+}
+
+/* BACKGROUND REMOVE */
+
+function removeBackground(){
+
+ if(!image){
+
+  status("⚠️ First image upload madi");
+  return;
+ }
+
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ ctx.drawImage(image,0,0,canvas.width,canvas.height);
+
+ const data=ctx.getImageData(
+  0,0,canvas.width,canvas.height
+ );
+
+ originalImageData=new Uint8ClampedArray(data.data);
+
+ for(let i=0;i<data.data.length;i+=4){
+
+  const r=data.data[i];
+  const g=data.data[i+1];
+  const b=data.data[i+2];
+
+  if(r>220 && g>220 && b>220){
+
+   data.data[i+3]=0;
+  }
+ }
+
+ ctx.putImageData(data,0,0);
+
+ drawText();
+
+ status("🖼️ Light background removed");
+}
+
+/* RESTORE */
+
+function restoreBackground(){
+
+ redraw();
+
+ status("♻️ Background restored");
+}
+
+/* DOWNLOAD */
+
+function downloadImage(){
+
+ const link=document.createElement("a");
+
+ link.download="RKG-EDITZ.png";
+
+ link.href=canvas.toDataURL("image/png");
+
+ link.click();
+
+ status("📥 Download started");
+}
+
+/* RESET */
+
+function resetAll(){
+
+ image=null;
+ logo=null;
+ currentEffect="normal";
+ currentTextStyle="normal";
+
+ document.getElementById("imageInput").value="";
+ document.getElementById("videoInput").value="";
+ document.getElementById("logoInput").value="";
+ document.getElementById("musicInput").value="";
+ document.getElementById("textInput").value="";
+
+ const audio=document.getElementById("audio");
+
+ audio.pause();
+ audio.src="";
+
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ redraw();
+
+ status("♻️ Reset complete");
+}
+
+redraw();
+
+</script>
+
+</body>
+  </html>
